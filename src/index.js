@@ -38,18 +38,10 @@ import {
   thirtyFour,
   thirtyFive} from "./tests";
 
-//import {point} from "./tests/point";
 import {foo} from "./tests/foo";
 
 const resultColor = "background: green; color: white"
 const errorColor = "background: red; color: white"
-
-//const md_square = `${square}`;
-//var md_arr = (
-//  point("1. What is the value?", square, square(11)) +
-//  point("2. What is the value?", resultValue, resultValue()) +
-//  point("0. square?")
-//);
 
 const questions = [
   { title: '1. What is the value?', code: square, result: square(11) },
