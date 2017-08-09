@@ -38,34 +38,75 @@ import {
   thirtyFour,
   thirtyFive} from "./tests";
 
+//import {point} from "./tests/point";
+import {foo} from "./tests/foo";
+
 const resultColor = "background: green; color: white"
 const errorColor = "background: red; color: white"
 
 //const md_square = `${square}`;
-//const md_counterValue = `${counterValue}`;
-//const md_val = `${square}`;
-var md_arr = [square];
+//var md_arr = (
+//  point("1. What is the value?", square, square(11)) +
+//  point("2. What is the value?", resultValue, resultValue()) +
+//  point("0. square?")
+//);
+
+const questions = [
+  { title: '1. What is the value?', code: square, result: square(11) },
+  { title: '2. What is the value?', code: resultValue, result: resultValue() },
+  { title: '3. What is the value of result?', code: counterThree, result: counterThree() },
+  { title: '4. What is the output?', code: isOutput, result: isOutput() },
+  { title: '5. What is the output?', code: whatOutput, result: whatOutput() },
+  { title: '6. What is the value of a, b?', code: whatValue, result: whatValue(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']) },
+  { title: '7. What is the value of result?', code: sevenValue, result: sevenValue() },
+  { title: '8. What is the value of result?', code: eightValue, result: eightValue() },
+  { title: '9. What should the toString function be?  to print "I Amory Blaine am 102 years old."', code: shouldToString, result: shouldToString() },
+  { title: '10. What is the value of result? :', code: whatIs, result: whatIs() },
+  { title: '11. What is the output? :', code: whatIsOutput, result: whatIsOutput() },
+  { title: '12. What is the value of result?', code: twelveResult, result: twelveResult() },
+  { title: '13. What is the value of child.b after this piece of code is executed?', code: whatExecuted, result: whatExecuted() },
+  { title: '14. What is the output?', code: fourteenOutput, result: fourteenOutput() },
+  { title: '15. What is the output?', code: fifteenOutput, result: fifteenOutput() },
+  { title: '16. What is the output?', code: sixteenOutput, result: sixteenOutput() },
+  { title: '17. Complete the implementation of this method so that it returns the sum of its arguments. **', code: sumArguments, result: sumArguments(1,2,3,4) },
+  { title: '17.2 sumArgumentsSecond. **', code: sumArgumentsSecond, result: sumArgumentsSecond(0,1,2,3,4) },
+  { title: '18. What is the value of result?', code: eighteenth, result: eighteenth() },
+  { title: '19. What is the value of result?', code: nineteenth, result: nineteenth() },
+  { title: '20. What is the output?', code: twentieth, result: twentieth() },
+  { title: '21. What is the value of results?', code: twentyOne, result: twentyOne() },
+  { title: '22. What is the output?', code: twentyTwo, result: twentyTwo() },
+  { title: '23. What is the output?', code: twentyThree, result: twentyThree() },
+  { title: '24. What is the output?', code: twentyFour, result: twentyFour() },
+  { title: '25. What is the output?', code: twentyFive, result: twentyFive() },
+  { title: '26. What is the value of pie?', code: twentySix, result: twentySix() },
+  { title: '27. What is the output?', code: twentySeven, result: twentySeven() },
+  { title: '28. What is the output?', code: twentyEight, result: twentyEight() },
+  { title: '29. What is the output?', code: twentyNine, result: twentyNine() },
+  { title: '30. What is the output?', code: thirtyOutput, result: thirtyOutput() },
+  { title: '31. What is the value of message?', code: thirtyOne, result: thirtyOne() },
+  { title: '32. What is the value of matches?', code: thirtyTwo, result: thirtyTwo() },
+  { title: '33. What is the output?', code: thirtyThree, result: thirtyThree() },
+  { title: '34. What is the output?', code: thirtyFour, result: thirtyFour() },
+  { title: '35. What is the output?', code: thirtyFive, result: thirtyFive() }
+];
+
+var a_arr = foo(questions)
 
 function component() {
-  var element = document.createElement('div');
-
-  // Lodash, currently included via a script, is required for this line to work
-  element.innerHTML = _.join(['<h1>Base tests</h1>', md_arr], ' ');
-
+  var element = document.createElement('section');
+  element.innerHTML = _.join(['<h1>JS base</h1>', a_arr], ' ');
   return element;
 }
-
 document.body.appendChild(component());
 
 //test int
 console.log("square:", square(11));
-
 console.log("1. What is the value of counter after executing the following piece of code? :", counterValue(10));
 console.log("2. What is the value of result? :", resultValue());
 console.log("3. What is the value of result? :", counterThree());
 console.log("4. What is the output? :", isOutput());
 console.log("5. What is the output? :", whatOutput());
-console.log("6. What is the value of a, b? :", sevenValue(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']));
+console.log("6. What is the value of a, b? :", whatValue(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']));
 console.log("7. What is the value of result? :", sevenValue());
 console.log("8. What is the value of result? :", eightValue());
 console.log("9. What should the toString function be?  to print 'I Amory Blaine am 102 years old.' :", shouldToString());
@@ -94,7 +135,6 @@ console.log("30. What is the output? :", thirtyOutput());
 console.log("31. What is the value of message? :", thirtyOne());
 console.log("32. What is the value of matches? :", thirtyTwo());
 console.log("%c 33. What is the output? :", errorColor, thirtyThree());
-console.log("33. What is the output? :", thirtyFour());
+console.log("34. What is the output? :", thirtyFour());
 console.log("35. What is the output? :", thirtyFive());
-
 console.log("=====================//=====================");
