@@ -72,7 +72,8 @@ export function shouldToString() {
   var person = {
       name: "Amory Blaine",
       age: 102,
-      toString: function() { return }
+      //toString: function() { return }
+      toString: function() { return this.name + " | " + this.age}
   };
   return person;
 }
