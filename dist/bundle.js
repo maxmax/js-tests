@@ -76,56 +76,48 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-//import {point} from "./tests/point";
 
 
 const resultColor = "background: green; color: white"
 const errorColor = "background: red; color: white"
 
-//const md_square = `${square}`;
-//var md_arr = (
-//  point("1. What is the value?", square, square(11)) +
-//  point("2. What is the value?", resultValue, resultValue()) +
-//  point("0. square?")
-//);
-
 const questions = [
-  { title: '1. What is the value?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["m" /* square */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["m" /* square */])(11) },
-  { title: '2. What is the value?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["i" /* resultValue */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["i" /* resultValue */])() },
+  { title: '1. What is the value?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["l" /* square */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["l" /* square */])(11) },
+  { title: '2. What is the value?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["h" /* resultValue */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["h" /* resultValue */])() },
   { title: '3. What is the value of result?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["a" /* counterThree */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["a" /* counterThree */])() },
-  { title: '4. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["g" /* isOutput */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["g" /* isOutput */])() },
-  { title: '5. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["J" /* whatOutput */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["J" /* whatOutput */])() },
-  { title: '6. What is the value of a, b?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["K" /* whatValue */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["K" /* whatValue */])(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']) },
-  { title: '7. What is the value of result?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["j" /* sevenValue */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["j" /* sevenValue */])() },
-  { title: '8. What is the value of result?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["c" /* eightValue */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["c" /* eightValue */])() },
-  { title: '9. What should the toString function be?  to print "I Amory Blaine am 102 years old."', code: __WEBPACK_IMPORTED_MODULE_1__tests__["k" /* shouldToString */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["k" /* shouldToString */])() },
-  { title: '10. What is the value of result? :', code: __WEBPACK_IMPORTED_MODULE_1__tests__["H" /* whatIs */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["H" /* whatIs */])() },
-  { title: '11. What is the output? :', code: __WEBPACK_IMPORTED_MODULE_1__tests__["I" /* whatIsOutput */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["I" /* whatIsOutput */])() },
-  { title: '12. What is the value of result?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["v" /* twelveResult */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["v" /* twelveResult */])() },
-  { title: '13. What is the value of child.b after this piece of code is executed?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["G" /* whatExecuted */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["G" /* whatExecuted */])() },
-  { title: '14. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["f" /* fourteenOutput */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["f" /* fourteenOutput */])() },
-  { title: '15. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["e" /* fifteenOutput */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["e" /* fifteenOutput */])() },
-  { title: '16. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["l" /* sixteenOutput */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["l" /* sixteenOutput */])() },
-  { title: '17. Complete the implementation of this method so that it returns the sum of its arguments. **', code: __WEBPACK_IMPORTED_MODULE_1__tests__["n" /* sumArguments */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["n" /* sumArguments */])(1,2,3,4) },
-  { title: '17.2 sumArgumentsSecond. **', code: __WEBPACK_IMPORTED_MODULE_1__tests__["o" /* sumArgumentsSecond */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["o" /* sumArgumentsSecond */])(0,1,2,3,4) },
-  { title: '18. What is the value of result?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["d" /* eighteenth */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["d" /* eighteenth */])() },
-  { title: '19. What is the value of result?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["h" /* nineteenth */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["h" /* nineteenth */])() },
-  { title: '20. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["w" /* twentieth */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["w" /* twentieth */])() },
-  { title: '21. What is the value of results?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["B" /* twentyOne */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["B" /* twentyOne */])() },
-  { title: '22. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["F" /* twentyTwo */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["F" /* twentyTwo */])() },
-  { title: '23. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["E" /* twentyThree */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["E" /* twentyThree */])() },
-  { title: '24. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["z" /* twentyFour */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["z" /* twentyFour */])() },
-  { title: '25. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["y" /* twentyFive */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["y" /* twentyFive */])() },
-  { title: '26. What is the value of pie?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["D" /* twentySix */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["D" /* twentySix */])() },
-  { title: '27. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["C" /* twentySeven */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["C" /* twentySeven */])() },
-  { title: '28. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["x" /* twentyEight */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["x" /* twentyEight */])() },
-  { title: '29. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["A" /* twentyNine */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["A" /* twentyNine */])() },
-  { title: '30. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["s" /* thirtyOutput */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["s" /* thirtyOutput */])() },
-  { title: '31. What is the value of message?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["r" /* thirtyOne */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["r" /* thirtyOne */])() },
-  { title: '32. What is the value of matches?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["u" /* thirtyTwo */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["u" /* thirtyTwo */])() },
-  { title: '33. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["t" /* thirtyThree */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["t" /* thirtyThree */])() },
-  { title: '34. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["q" /* thirtyFour */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["q" /* thirtyFour */])() },
-  { title: '35. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["p" /* thirtyFive */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["p" /* thirtyFive */])() }
+  { title: '4. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["f" /* isOutput */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["f" /* isOutput */])() },
+  { title: '5. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["I" /* whatOutput */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["I" /* whatOutput */])() },
+  { title: '6. What is the value of a, b?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["J" /* whatValue */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["J" /* whatValue */])(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']) },
+  { title: '7. What is the value of result?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["i" /* sevenValue */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["i" /* sevenValue */])() },
+  { title: '8. What is the value of result?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["b" /* eightValue */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["b" /* eightValue */])() },
+  { title: '9. What should the toString function be?  to print "I Amory Blaine am 102 years old."', code: __WEBPACK_IMPORTED_MODULE_1__tests__["j" /* shouldToString */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["j" /* shouldToString */])() },
+  { title: '10. What is the value of result? :', code: __WEBPACK_IMPORTED_MODULE_1__tests__["G" /* whatIs */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["G" /* whatIs */])() },
+  { title: '11. What is the output? :', code: __WEBPACK_IMPORTED_MODULE_1__tests__["H" /* whatIsOutput */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["H" /* whatIsOutput */])() },
+  { title: '12. What is the value of result?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["u" /* twelveResult */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["u" /* twelveResult */])() },
+  { title: '13. What is the value of child.b after this piece of code is executed?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["F" /* whatExecuted */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["F" /* whatExecuted */])() },
+  { title: '14. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["e" /* fourteenOutput */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["e" /* fourteenOutput */])() },
+  { title: '15. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["d" /* fifteenOutput */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["d" /* fifteenOutput */])() },
+  { title: '16. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["k" /* sixteenOutput */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["k" /* sixteenOutput */])() },
+  { title: '17. Complete the implementation of this method so that it returns the sum of its arguments. **', code: __WEBPACK_IMPORTED_MODULE_1__tests__["m" /* sumArguments */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["m" /* sumArguments */])(1,2,3,4) },
+  { title: '17.2 sumArgumentsSecond. **', code: __WEBPACK_IMPORTED_MODULE_1__tests__["n" /* sumArgumentsSecond */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["n" /* sumArgumentsSecond */])(0,1,2,3,4) },
+  { title: '18. What is the value of result?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["c" /* eighteenth */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["c" /* eighteenth */])() },
+  { title: '19. What is the value of result?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["g" /* nineteenth */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["g" /* nineteenth */])() },
+  { title: '20. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["v" /* twentieth */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["v" /* twentieth */])() },
+  { title: '21. What is the value of results?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["A" /* twentyOne */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["A" /* twentyOne */])() },
+  { title: '22. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["E" /* twentyTwo */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["E" /* twentyTwo */])() },
+  { title: '23. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["D" /* twentyThree */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["D" /* twentyThree */])() },
+  { title: '24. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["y" /* twentyFour */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["y" /* twentyFour */])() },
+  { title: '25. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["x" /* twentyFive */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["x" /* twentyFive */])() },
+  { title: '26. What is the value of pie?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["C" /* twentySix */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["C" /* twentySix */])() },
+  { title: '27. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["B" /* twentySeven */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["B" /* twentySeven */])() },
+  { title: '28. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["w" /* twentyEight */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["w" /* twentyEight */])() },
+  { title: '29. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["z" /* twentyNine */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["z" /* twentyNine */])() },
+  { title: '30. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["r" /* thirtyOutput */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["r" /* thirtyOutput */])() },
+  { title: '31. What is the value of message?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["q" /* thirtyOne */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["q" /* thirtyOne */])() },
+  { title: '32. What is the value of matches?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["t" /* thirtyTwo */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["t" /* thirtyTwo */])() },
+  { title: '33. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["s" /* thirtyThree */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["s" /* thirtyThree */])() },
+  { title: '34. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["p" /* thirtyFour */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["p" /* thirtyFour */])() },
+  { title: '35. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["o" /* thirtyFive */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["o" /* thirtyFive */])() }
 ];
 
 var a_arr = Object(__WEBPACK_IMPORTED_MODULE_2__tests_foo__["a" /* foo */])(questions)
@@ -137,44 +129,11 @@ function component() {
 }
 document.body.appendChild(component());
 
-//test int
-console.log("square:", Object(__WEBPACK_IMPORTED_MODULE_1__tests__["m" /* square */])(11));
-console.log("1. What is the value of counter after executing the following piece of code? :", Object(__WEBPACK_IMPORTED_MODULE_1__tests__["b" /* counterValue */])(10));
-console.log("2. What is the value of result? :", Object(__WEBPACK_IMPORTED_MODULE_1__tests__["i" /* resultValue */])());
-console.log("3. What is the value of result? :", Object(__WEBPACK_IMPORTED_MODULE_1__tests__["a" /* counterThree */])());
-console.log("4. What is the output? :", Object(__WEBPACK_IMPORTED_MODULE_1__tests__["g" /* isOutput */])());
-console.log("5. What is the output? :", Object(__WEBPACK_IMPORTED_MODULE_1__tests__["J" /* whatOutput */])());
-console.log("6. What is the value of a, b? :", Object(__WEBPACK_IMPORTED_MODULE_1__tests__["K" /* whatValue */])(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']));
-console.log("7. What is the value of result? :", Object(__WEBPACK_IMPORTED_MODULE_1__tests__["j" /* sevenValue */])());
-console.log("8. What is the value of result? :", Object(__WEBPACK_IMPORTED_MODULE_1__tests__["c" /* eightValue */])());
-console.log("9. What should the toString function be?  to print 'I Amory Blaine am 102 years old.' :", Object(__WEBPACK_IMPORTED_MODULE_1__tests__["k" /* shouldToString */])());
-console.log("10. What is the value of result? :", Object(__WEBPACK_IMPORTED_MODULE_1__tests__["H" /* whatIs */])());
-console.log("11. What is the output? :", Object(__WEBPACK_IMPORTED_MODULE_1__tests__["I" /* whatIsOutput */])());
-console.log("12. What is the value of result? :", Object(__WEBPACK_IMPORTED_MODULE_1__tests__["v" /* twelveResult */])());
-console.log("13. What is the value of child.b after this piece of code is executed? :", Object(__WEBPACK_IMPORTED_MODULE_1__tests__["G" /* whatExecuted */])());
-console.log("14. What is the output? :", Object(__WEBPACK_IMPORTED_MODULE_1__tests__["f" /* fourteenOutput */])());
-console.log("15. What is the output? :", Object(__WEBPACK_IMPORTED_MODULE_1__tests__["e" /* fifteenOutput */])());
-console.log("16. What is the output? :", Object(__WEBPACK_IMPORTED_MODULE_1__tests__["l" /* sixteenOutput */])());
-console.log("%c 17. Complete the implementation of this method so that it returns the sum of its arguments. :", resultColor, Object(__WEBPACK_IMPORTED_MODULE_1__tests__["n" /* sumArguments */])(1,2,3,4));
-console.log("%c 17.2 sumArgumentsSecond. :", resultColor, Object(__WEBPACK_IMPORTED_MODULE_1__tests__["o" /* sumArgumentsSecond */])(0,1,2,3,4));
-console.log("18. What is the value of result? :", Object(__WEBPACK_IMPORTED_MODULE_1__tests__["d" /* eighteenth */])());
-console.log("19. What is the value of result? :", Object(__WEBPACK_IMPORTED_MODULE_1__tests__["h" /* nineteenth */])());
-console.log("%c 20. What is the output? :", errorColor, Object(__WEBPACK_IMPORTED_MODULE_1__tests__["w" /* twentieth */])());
-console.log("21. What is the value of results? :", Object(__WEBPACK_IMPORTED_MODULE_1__tests__["B" /* twentyOne */])());
-console.log("22. What is the output? :", Object(__WEBPACK_IMPORTED_MODULE_1__tests__["F" /* twentyTwo */])());
-console.log("23. What is the output? :", Object(__WEBPACK_IMPORTED_MODULE_1__tests__["E" /* twentyThree */])());
-console.log("24. What is the output? :", Object(__WEBPACK_IMPORTED_MODULE_1__tests__["z" /* twentyFour */])());
-console.log("25. What is the output? :", Object(__WEBPACK_IMPORTED_MODULE_1__tests__["y" /* twentyFive */])());
-console.log("26. What is the value of pie? :", Object(__WEBPACK_IMPORTED_MODULE_1__tests__["D" /* twentySix */])());
-console.log("27. What is the output? :", Object(__WEBPACK_IMPORTED_MODULE_1__tests__["C" /* twentySeven */])());
-console.log("28. What is the output? :", Object(__WEBPACK_IMPORTED_MODULE_1__tests__["x" /* twentyEight */])());
-console.log("29. What is the output? :", Object(__WEBPACK_IMPORTED_MODULE_1__tests__["A" /* twentyNine */])());
-console.log("30. What is the output? :", Object(__WEBPACK_IMPORTED_MODULE_1__tests__["s" /* thirtyOutput */])());
-console.log("31. What is the value of message? :", Object(__WEBPACK_IMPORTED_MODULE_1__tests__["r" /* thirtyOne */])());
-console.log("32. What is the value of matches? :", Object(__WEBPACK_IMPORTED_MODULE_1__tests__["u" /* thirtyTwo */])());
-console.log("%c 33. What is the output? :", errorColor, Object(__WEBPACK_IMPORTED_MODULE_1__tests__["t" /* thirtyThree */])());
-console.log("34. What is the output? :", Object(__WEBPACK_IMPORTED_MODULE_1__tests__["q" /* thirtyFour */])());
-console.log("35. What is the output? :", Object(__WEBPACK_IMPORTED_MODULE_1__tests__["p" /* thirtyFive */])());
+//results
+console.log("%c 17. Complete the implementation of this method so that it returns the sum of its arguments. :", resultColor, Object(__WEBPACK_IMPORTED_MODULE_1__tests__["m" /* sumArguments */])(1,2,3,4));
+console.log("%c 17.2 sumArgumentsSecond. :", resultColor, Object(__WEBPACK_IMPORTED_MODULE_1__tests__["n" /* sumArgumentsSecond */])(0,1,2,3,4));
+console.log("%c 20. What is the output? :", errorColor, Object(__WEBPACK_IMPORTED_MODULE_1__tests__["v" /* twentieth */])());
+console.log("%c 33. What is the output? :", errorColor, Object(__WEBPACK_IMPORTED_MODULE_1__tests__["s" /* thirtyThree */])());
 console.log("=====================//=====================");
 
 
@@ -17330,43 +17289,43 @@ module.exports = function(module) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (immutable) */ __webpack_exports__["m"] = square;
-/* harmony export (immutable) */ __webpack_exports__["b"] = counterValue;
-/* harmony export (immutable) */ __webpack_exports__["i"] = resultValue;
+/* harmony export (immutable) */ __webpack_exports__["l"] = square;
+/* unused harmony export counterValue */
+/* harmony export (immutable) */ __webpack_exports__["h"] = resultValue;
 /* harmony export (immutable) */ __webpack_exports__["a"] = counterThree;
-/* harmony export (immutable) */ __webpack_exports__["g"] = isOutput;
-/* harmony export (immutable) */ __webpack_exports__["J"] = whatOutput;
-/* harmony export (immutable) */ __webpack_exports__["K"] = whatValue;
-/* harmony export (immutable) */ __webpack_exports__["j"] = sevenValue;
-/* harmony export (immutable) */ __webpack_exports__["c"] = eightValue;
-/* harmony export (immutable) */ __webpack_exports__["k"] = shouldToString;
-/* harmony export (immutable) */ __webpack_exports__["H"] = whatIs;
-/* harmony export (immutable) */ __webpack_exports__["I"] = whatIsOutput;
-/* harmony export (immutable) */ __webpack_exports__["v"] = twelveResult;
-/* harmony export (immutable) */ __webpack_exports__["G"] = whatExecuted;
-/* harmony export (immutable) */ __webpack_exports__["f"] = fourteenOutput;
-/* harmony export (immutable) */ __webpack_exports__["e"] = fifteenOutput;
-/* harmony export (immutable) */ __webpack_exports__["l"] = sixteenOutput;
-/* harmony export (immutable) */ __webpack_exports__["n"] = sumArguments;
-/* harmony export (immutable) */ __webpack_exports__["o"] = sumArgumentsSecond;
-/* harmony export (immutable) */ __webpack_exports__["d"] = eighteenth;
-/* harmony export (immutable) */ __webpack_exports__["h"] = nineteenth;
-/* harmony export (immutable) */ __webpack_exports__["w"] = twentieth;
-/* harmony export (immutable) */ __webpack_exports__["B"] = twentyOne;
-/* harmony export (immutable) */ __webpack_exports__["F"] = twentyTwo;
-/* harmony export (immutable) */ __webpack_exports__["E"] = twentyThree;
-/* harmony export (immutable) */ __webpack_exports__["z"] = twentyFour;
-/* harmony export (immutable) */ __webpack_exports__["y"] = twentyFive;
-/* harmony export (immutable) */ __webpack_exports__["D"] = twentySix;
-/* harmony export (immutable) */ __webpack_exports__["C"] = twentySeven;
-/* harmony export (immutable) */ __webpack_exports__["x"] = twentyEight;
-/* harmony export (immutable) */ __webpack_exports__["A"] = twentyNine;
-/* harmony export (immutable) */ __webpack_exports__["s"] = thirtyOutput;
-/* harmony export (immutable) */ __webpack_exports__["r"] = thirtyOne;
-/* harmony export (immutable) */ __webpack_exports__["u"] = thirtyTwo;
-/* harmony export (immutable) */ __webpack_exports__["t"] = thirtyThree;
-/* harmony export (immutable) */ __webpack_exports__["q"] = thirtyFour;
-/* harmony export (immutable) */ __webpack_exports__["p"] = thirtyFive;
+/* harmony export (immutable) */ __webpack_exports__["f"] = isOutput;
+/* harmony export (immutable) */ __webpack_exports__["I"] = whatOutput;
+/* harmony export (immutable) */ __webpack_exports__["J"] = whatValue;
+/* harmony export (immutable) */ __webpack_exports__["i"] = sevenValue;
+/* harmony export (immutable) */ __webpack_exports__["b"] = eightValue;
+/* harmony export (immutable) */ __webpack_exports__["j"] = shouldToString;
+/* harmony export (immutable) */ __webpack_exports__["G"] = whatIs;
+/* harmony export (immutable) */ __webpack_exports__["H"] = whatIsOutput;
+/* harmony export (immutable) */ __webpack_exports__["u"] = twelveResult;
+/* harmony export (immutable) */ __webpack_exports__["F"] = whatExecuted;
+/* harmony export (immutable) */ __webpack_exports__["e"] = fourteenOutput;
+/* harmony export (immutable) */ __webpack_exports__["d"] = fifteenOutput;
+/* harmony export (immutable) */ __webpack_exports__["k"] = sixteenOutput;
+/* harmony export (immutable) */ __webpack_exports__["m"] = sumArguments;
+/* harmony export (immutable) */ __webpack_exports__["n"] = sumArgumentsSecond;
+/* harmony export (immutable) */ __webpack_exports__["c"] = eighteenth;
+/* harmony export (immutable) */ __webpack_exports__["g"] = nineteenth;
+/* harmony export (immutable) */ __webpack_exports__["v"] = twentieth;
+/* harmony export (immutable) */ __webpack_exports__["A"] = twentyOne;
+/* harmony export (immutable) */ __webpack_exports__["E"] = twentyTwo;
+/* harmony export (immutable) */ __webpack_exports__["D"] = twentyThree;
+/* harmony export (immutable) */ __webpack_exports__["y"] = twentyFour;
+/* harmony export (immutable) */ __webpack_exports__["x"] = twentyFive;
+/* harmony export (immutable) */ __webpack_exports__["C"] = twentySix;
+/* harmony export (immutable) */ __webpack_exports__["B"] = twentySeven;
+/* harmony export (immutable) */ __webpack_exports__["w"] = twentyEight;
+/* harmony export (immutable) */ __webpack_exports__["z"] = twentyNine;
+/* harmony export (immutable) */ __webpack_exports__["r"] = thirtyOutput;
+/* harmony export (immutable) */ __webpack_exports__["q"] = thirtyOne;
+/* harmony export (immutable) */ __webpack_exports__["t"] = thirtyTwo;
+/* harmony export (immutable) */ __webpack_exports__["s"] = thirtyThree;
+/* harmony export (immutable) */ __webpack_exports__["p"] = thirtyFour;
+/* harmony export (immutable) */ __webpack_exports__["o"] = thirtyFive;
 //base tests
 function square(x = 1) {
   return x * x;
