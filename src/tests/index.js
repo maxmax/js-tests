@@ -389,3 +389,17 @@ export function thirtyFive() {
   var a = null;
   return typeof a === "object";
 }
+
+//36. What is the output?
+export function promiseRes() {
+  let promise = new Promise((resolve) => {
+    setTimeout(() => {
+      resolve('Promise resolved');
+    }, 500);
+    console.log( 'Promise activated' );
+  });
+  promise.then((result) => console.log("35. What is the output:", result));
+  //return result;
+}
+
+//promise

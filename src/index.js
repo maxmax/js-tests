@@ -36,7 +36,8 @@ import {
   thirtyTwo,
   thirtyThree,
   thirtyFour,
-  thirtyFive} from "./tests";
+  thirtyFive,
+  promiseRes} from "./tests";
 
 import {foo} from "./tests/foo";
 
@@ -79,7 +80,8 @@ const questions = [
   { title: '32. What is the value of matches?', code: thirtyTwo, result: thirtyTwo() },
   { title: '33. What is the output?', code: thirtyThree, result: thirtyThree() },
   { title: '34. What is the output?', code: thirtyFour, result: thirtyFour() },
-  { title: '35. What is the output?', code: thirtyFive, result: thirtyFive() }
+  { title: '35. What is the output?', code: thirtyFive, result: thirtyFive() },
+  { title: '36. What is the result?', code: promiseRes, result: promiseRes() }
 ];
 
 var a_arr = foo(questions)
