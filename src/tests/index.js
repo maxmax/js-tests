@@ -1,3 +1,6 @@
+import Animal from "./animal";
+import Bar from "./bar";
+
 //base tests
 export function square(x = 1) {
   return x * x;
@@ -125,7 +128,7 @@ export function fourteenOutput() {
   var child = Object.create(father);
   child.a = 1;
   child.b = 2;
-  return child.hasOwnProperty('c');
+  return child.hasOwnProperty('b');
 }
 
 //15. What is the output? -
@@ -201,29 +204,31 @@ export function eighteenth() {
 //19. What is the value of result?
 export function nineteenth() {
   var invokee = function( message1, message2 ){
-    return this + message1 + message2;
+    return this + message2 + message1;
   };
-  var result = invokee.apply("I am", ["a","z"]);
+  var result = invokee.apply("I am ", ["a","z"]);
 
   return result;
 }
 
 //20. What is the output?
-export function twentieth(globalName = "'error globalName'") {
+export function twentieth() {
   var person = {
-  	globalName: 'bob',
-  	intro: function () {
+    globalName: 'bob',
+    intro: function () {
       return "Hello, my name is " + globalName;
-  	}
+    }
   }
   var alias = person.intro;
   window.globalName = 'Peter';
+  console.log("window:", window.globalName)
   return alias();
 }
 
 //21. What is the value of results?
 export function twentyOne() {
-  var numberFinder = /(\d).*(\d)/;
+  //var numberFinder = /(\d).*(\d)/;
+  var numberFinder = /(\d)+/;
   var results = numberFinder.exec("what if 6 turned out to be 9?");
   return results;
 }
@@ -403,4 +408,10 @@ export function promiseRes() {
   //return result;
 }
 
-//promise
+//37. What is the output?
+export function intRes() {
+  const intbar = document.querySelector('#output');
+  const see = document.querySelector('[data-role="see"]');
+  const mainbar = new Bar('ololo', intbar, see);
+  mainbar.speak();
+}
