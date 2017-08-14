@@ -91,13 +91,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__tests__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__tests_foo__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__tests_api__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__tests_nums__ = __webpack_require__(9);
 
 
 
 
 
-const resultColor = "background: green; color: white"
-const errorColor = "background: red; color: white"
+
+
+const resultColor = "background: green; color: white";
+const errorColor = "background: red; color: white";
+
+const impAmount = (`Amount of imports: ${__WEBPACK_IMPORTED_MODULE_4__tests_nums__["a" /* one */] + __WEBPACK_IMPORTED_MODULE_4__tests_nums__["b" /* two */]}`);
+console.log("impAmount:", impAmount);
+//document.write(`Amount of imports: ${one + two}`);
 
 const questions = [
   { title: '1. What is the value?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["n" /* square */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["n" /* square */])(11) },
@@ -140,8 +148,6 @@ const questions = [
   { title: '37. What is the result?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["f" /* intRes */] }
 ];
 
-var a_arr = Object(__WEBPACK_IMPORTED_MODULE_2__tests_foo__["a" /* foo */])(questions)
-
 const marfooter = `
   <section id="output">
     <h2>37. What is the result? tmp</h2>
@@ -149,13 +155,17 @@ const marfooter = `
   </section>
 `;
 
+//vsiake asenhr dno
+Object(__WEBPACK_IMPORTED_MODULE_3__tests_api__["a" /* api */])();
+
 function component() {
   var element = document.createElement('section');
-  element.innerHTML = __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.join(['<h1>JS base</h1>', a_arr, marfooter], ' ');
+  element.innerHTML = __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.join(['<h1>JS base</h1>', Object(__WEBPACK_IMPORTED_MODULE_2__tests_foo__["a" /* foo */])(questions), marfooter], ' ');
   return element;
 }
 document.body.appendChild(component());
 
+//main action
 Object(__WEBPACK_IMPORTED_MODULE_1__tests__["f" /* intRes */])();
 
 //results
@@ -17787,17 +17797,30 @@ function intRes() {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__animal__ = __webpack_require__(0);
 
 
+const outputwrap = `
+  <section class="output-wrap">
+    <h2>Output wrap</h2>
+  </section>
+`;
+
+function outerWrap() {
+  var element = document.createElement('section');
+  element.innerHTML = _.join([outputwrap], ' ');
+  return element;
+}
+
 class Bar {
     constructor (name = 'Empty', ind = null) {
       this.name = name;
       this.ind = ind;
     }
-
     speak() {
       const inname = this.name;
       if (this.ind){
         this.ind.addEventListener('click', function() {
           const animal = new __WEBPACK_IMPORTED_MODULE_0__animal__["a" /* default */](inname);
+          console.log("this", this);
+          document.body.appendChild(outerWrap());
           animal.speak();
         });
       }
@@ -17829,6 +17852,34 @@ function foo(items = []) {
   `;
   return markup;
 }
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = api;
+//point
+function api(items = []) {
+  const markup = "api";
+  console.log(markup);
+  return markup;
+}
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return one; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return two; });
+let one = 1;
+
+let two = 2;
+
+
 
 
 /***/ })

@@ -41,9 +41,15 @@ import {
   intRes} from "./tests";
 
 import {foo} from "./tests/foo";
+import {api} from "./tests/api";
+import {one, two} from './tests/nums';
 
-const resultColor = "background: green; color: white"
-const errorColor = "background: red; color: white"
+const resultColor = "background: green; color: white";
+const errorColor = "background: red; color: white";
+
+const impAmount = (`Amount of imports: ${one + two}`);
+console.log("impAmount:", impAmount);
+//document.write(`Amount of imports: ${one + two}`);
 
 const questions = [
   { title: '1. What is the value?', code: square, result: square(11) },
@@ -86,8 +92,6 @@ const questions = [
   { title: '37. What is the result?', code: intRes }
 ];
 
-var a_arr = foo(questions)
-
 const marfooter = `
   <section id="output">
     <h2>37. What is the result? tmp</h2>
@@ -95,13 +99,17 @@ const marfooter = `
   </section>
 `;
 
+//vsiake asenhr dno
+api();
+
 function component() {
   var element = document.createElement('section');
-  element.innerHTML = _.join(['<h1>JS base</h1>', a_arr, marfooter], ' ');
+  element.innerHTML = _.join(['<h1>JS base</h1>', foo(questions), marfooter], ' ');
   return element;
 }
 document.body.appendChild(component());
 
+//main action
 intRes();
 
 //results

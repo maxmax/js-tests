@@ -1,4 +1,6 @@
 - npm run build
+- npm run deploy
+- npm nodemon
 
 ```
 //1. What is the value of counter after executing the following piece of code?
