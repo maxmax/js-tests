@@ -415,3 +415,15 @@ export function intRes() {
   const mainbar = new Bar('ololo', intbar, see);
   mainbar.speak();
 }
+
+//38. Sort numeric array, What is the output?
+export function numRes() {
+  var a = [ 1, 4, 8, 10, 13 ];
+  var b = [ 2, 3, 7 ];
+  var c = [ 14, 15 ];
+  var arr = a.concat(b, c);
+  var d = arr.sort(function (a, b) {
+    return a - b;
+  });
+  return d;
+}

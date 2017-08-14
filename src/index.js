@@ -38,7 +38,8 @@ import {
   thirtyFour,
   thirtyFive,
   promiseRes,
-  intRes} from "./tests";
+  intRes,
+  numRes} from "./tests";
 
 import {foo} from "./tests/foo";
 import {api} from "./tests/api";
@@ -89,7 +90,8 @@ const questions = [
   { title: '34. What is the output?', code: thirtyFour, result: thirtyFour() },
   { title: '35. What is the output?', code: thirtyFive, result: thirtyFive() },
   { title: '36. What is the result?', code: promiseRes, result: promiseRes() },
-  { title: '37. What is the result?', code: intRes }
+  { title: '37. What is the result?', code: intRes },
+  { title: '38. What is the result?', code: numRes, result: numRes() }
 ];
 
 const marfooter = `
