@@ -91,19 +91,23 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__tests__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__tests_foo__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__tests_api__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__tests_nums__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__tests_nums__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__tests_inj__ = __webpack_require__(9);
+
+
+
+//components
 
 
 
 
-
-
+//loader
+Object(__WEBPACK_IMPORTED_MODULE_4__tests_inj__["a" /* injFun */])();
 
 const resultColor = "background: green; color: white";
 const errorColor = "background: red; color: white";
 
-const impAmount = (`Amount of imports: ${__WEBPACK_IMPORTED_MODULE_4__tests_nums__["a" /* one */] + __WEBPACK_IMPORTED_MODULE_4__tests_nums__["b" /* two */]}`);
+const impAmount = (`Amount of imports: ${__WEBPACK_IMPORTED_MODULE_3__tests_nums__["a" /* one */] + __WEBPACK_IMPORTED_MODULE_3__tests_nums__["b" /* two */]}`);
 console.log("impAmount:", impAmount);
 //document.write(`Amount of imports: ${one + two}`);
 
@@ -156,9 +160,6 @@ const marfooter = `
   </section>
 `;
 
-//vsiake asenhr dno
-Object(__WEBPACK_IMPORTED_MODULE_3__tests_api__["a" /* api */])();
-
 function component() {
   var element = document.createElement('section');
   element.innerHTML = __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.join(['<h1>JS base</h1>', Object(__WEBPACK_IMPORTED_MODULE_2__tests_foo__["a" /* foo */])(questions), marfooter], ' ');
@@ -168,6 +169,7 @@ document.body.appendChild(component());
 
 //main action
 Object(__WEBPACK_IMPORTED_MODULE_1__tests__["f" /* intRes */])();
+//
 
 //results
 console.log("%c 13. What is the value of child.b after this piece of code is executed?", resultColor, Object(__WEBPACK_IMPORTED_MODULE_1__tests__["I" /* whatExecuted */])());
@@ -17873,20 +17875,6 @@ function foo(items = []) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (immutable) */ __webpack_exports__["a"] = api;
-//point
-function api(items = []) {
-  const markup = "api";
-  console.log(markup);
-  return markup;
-}
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return one; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return two; });
 let one = 1;
@@ -17894,6 +17882,90 @@ let one = 1;
 let two = 2;
 
 
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = injFun;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__api__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__table__ = __webpack_require__(11);
+
+
+
+function injFun() {
+  const films = Object(__WEBPACK_IMPORTED_MODULE_0__api__["a" /* fetchInt */])('https://ghibliapi.herokuapp.com/films/');
+  const beers = Object(__WEBPACK_IMPORTED_MODULE_0__api__["a" /* fetchInt */])('https://api.punkapi.com/v2/beers?page=1&per_page=20');
+  Promise.all([films, beers]).then(values => {
+    const resfilms = Object(__WEBPACK_IMPORTED_MODULE_1__table__["a" /* tableFilms */])(values[0]);
+    //console.log("values[0]:", values[0]);
+    function comp() {
+      var element = document.createElement('section');
+      element.innerHTML = _.join([resfilms], ' ');
+      return element;
+    }
+    document.body.appendChild(comp());
+  });
+}
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+function status(response) {
+  if (response.status >= 200 && response.status < 300) {
+    return Promise.resolve(response)
+  } else {
+    return Promise.reject(new Error(response.statusText))
+  }
+}
+
+function json(response) {
+  return response.json();
+}
+
+var myInit = {method: 'GET'};
+
+const fetchInt = (url) => {
+  const res = fetch(url, myInit)
+    .then(status)
+    .then(json)
+    .then(function(data) {
+      return data;
+    }).catch(function(error) {
+      console.log('Request failed', error);
+    });
+  return res;
+};
+/* harmony export (immutable) */ __webpack_exports__["a"] = fetchInt;
+
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = tableFilms;
+//point
+function tableFilms(items = []) {
+  const markup = `
+    <div class="table">
+      ${items.map(item => `<div class="qu">
+        <h2>${item.title}</h2>
+        <small>${item.director}</small>
+        <p class="description">${item.description}</p>
+        <strong>Score: ${item.rt_score}</strong>
+        <hr />
+      </div>`).join('')}
+    </div>
+  `;
+  return markup;
+}
 
 
 /***/ })

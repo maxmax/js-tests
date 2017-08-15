@@ -41,9 +41,13 @@ import {
   intRes,
   numRes} from "./tests";
 
+//components
 import {foo} from "./tests/foo";
-import {api} from "./tests/api";
 import {one, two} from './tests/nums';
+import {injFun} from "./tests/inj";
+
+//loader
+injFun();
 
 const resultColor = "background: green; color: white";
 const errorColor = "background: red; color: white";
@@ -101,9 +105,6 @@ const marfooter = `
   </section>
 `;
 
-//vsiake asenhr dno
-api();
-
 function component() {
   var element = document.createElement('section');
   element.innerHTML = _.join(['<h1>JS base</h1>', foo(questions), marfooter], ' ');
@@ -113,6 +114,7 @@ document.body.appendChild(component());
 
 //main action
 intRes();
+//
 
 //results
 console.log("%c 13. What is the value of child.b after this piece of code is executed?", resultColor, whatExecuted());

@@ -9,6 +9,8 @@ const questions = [
   { title: '1. What is the value?', code: square, result: square(11) }
 ];
 
+const assetUrl = process.env.NODE_ENV !== 'production' ? 'http://localhost:8050' : '/';
+
 app.get('/', function (req, res) {
   //res.sendFile(path.join(dist + "index.html"));
   //const componentHTML = ReactDom.renderToString(<App />);
@@ -24,8 +26,6 @@ app.get('/api', function (req, res) {
 app.get('/tests', function (req, res) {
   res.send(JSON.stringify([1,2,3]));
 })
-
-const assetUrl = process.env.NODE_ENV !== 'production' ? 'http://localhost:8050' : '/';
 
 function renderHTML(componentHTML) {
   return `
