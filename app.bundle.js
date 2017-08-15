@@ -1,4 +1,651 @@
 /******/ (function(modules) { // webpackBootstrap
+/******/ 	function hotDisposeChunk(chunkId) {
+/******/ 		delete installedChunks[chunkId];
+/******/ 	}
+/******/ 	var parentHotUpdateCallback = this["webpackHotUpdate"];
+/******/ 	this["webpackHotUpdate"] = 
+/******/ 	function webpackHotUpdateCallback(chunkId, moreModules) { // eslint-disable-line no-unused-vars
+/******/ 		hotAddUpdateChunk(chunkId, moreModules);
+/******/ 		if(parentHotUpdateCallback) parentHotUpdateCallback(chunkId, moreModules);
+/******/ 	} ;
+/******/ 	
+/******/ 	function hotDownloadUpdateChunk(chunkId) { // eslint-disable-line no-unused-vars
+/******/ 		var head = document.getElementsByTagName("head")[0];
+/******/ 		var script = document.createElement("script");
+/******/ 		script.type = "text/javascript";
+/******/ 		script.charset = "utf-8";
+/******/ 		script.src = __webpack_require__.p + "" + chunkId + "." + hotCurrentHash + ".hot-update.js";
+/******/ 		head.appendChild(script);
+/******/ 	}
+/******/ 	
+/******/ 	function hotDownloadManifest(requestTimeout) { // eslint-disable-line no-unused-vars
+/******/ 		requestTimeout = requestTimeout || 10000;
+/******/ 		return new Promise(function(resolve, reject) {
+/******/ 			if(typeof XMLHttpRequest === "undefined")
+/******/ 				return reject(new Error("No browser support"));
+/******/ 			try {
+/******/ 				var request = new XMLHttpRequest();
+/******/ 				var requestPath = __webpack_require__.p + "" + hotCurrentHash + ".hot-update.json";
+/******/ 				request.open("GET", requestPath, true);
+/******/ 				request.timeout = requestTimeout;
+/******/ 				request.send(null);
+/******/ 			} catch(err) {
+/******/ 				return reject(err);
+/******/ 			}
+/******/ 			request.onreadystatechange = function() {
+/******/ 				if(request.readyState !== 4) return;
+/******/ 				if(request.status === 0) {
+/******/ 					// timeout
+/******/ 					reject(new Error("Manifest request to " + requestPath + " timed out."));
+/******/ 				} else if(request.status === 404) {
+/******/ 					// no update available
+/******/ 					resolve();
+/******/ 				} else if(request.status !== 200 && request.status !== 304) {
+/******/ 					// other failure
+/******/ 					reject(new Error("Manifest request to " + requestPath + " failed."));
+/******/ 				} else {
+/******/ 					// success
+/******/ 					try {
+/******/ 						var update = JSON.parse(request.responseText);
+/******/ 					} catch(e) {
+/******/ 						reject(e);
+/******/ 						return;
+/******/ 					}
+/******/ 					resolve(update);
+/******/ 				}
+/******/ 			};
+/******/ 		});
+/******/ 	}
+/******/
+/******/ 	
+/******/ 	
+/******/ 	var hotApplyOnUpdate = true;
+/******/ 	var hotCurrentHash = "25996fc7fdbfbe222060"; // eslint-disable-line no-unused-vars
+/******/ 	var hotRequestTimeout = 10000;
+/******/ 	var hotCurrentModuleData = {};
+/******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentParentsTemp = []; // eslint-disable-line no-unused-vars
+/******/ 	
+/******/ 	function hotCreateRequire(moduleId) { // eslint-disable-line no-unused-vars
+/******/ 		var me = installedModules[moduleId];
+/******/ 		if(!me) return __webpack_require__;
+/******/ 		var fn = function(request) {
+/******/ 			if(me.hot.active) {
+/******/ 				if(installedModules[request]) {
+/******/ 					if(installedModules[request].parents.indexOf(moduleId) < 0)
+/******/ 						installedModules[request].parents.push(moduleId);
+/******/ 				} else {
+/******/ 					hotCurrentParents = [moduleId];
+/******/ 					hotCurrentChildModule = request;
+/******/ 				}
+/******/ 				if(me.children.indexOf(request) < 0)
+/******/ 					me.children.push(request);
+/******/ 			} else {
+/******/ 				console.warn("[HMR] unexpected require(" + request + ") from disposed module " + moduleId);
+/******/ 				hotCurrentParents = [];
+/******/ 			}
+/******/ 			return __webpack_require__(request);
+/******/ 		};
+/******/ 		var ObjectFactory = function ObjectFactory(name) {
+/******/ 			return {
+/******/ 				configurable: true,
+/******/ 				enumerable: true,
+/******/ 				get: function() {
+/******/ 					return __webpack_require__[name];
+/******/ 				},
+/******/ 				set: function(value) {
+/******/ 					__webpack_require__[name] = value;
+/******/ 				}
+/******/ 			};
+/******/ 		};
+/******/ 		for(var name in __webpack_require__) {
+/******/ 			if(Object.prototype.hasOwnProperty.call(__webpack_require__, name) && name !== "e") {
+/******/ 				Object.defineProperty(fn, name, ObjectFactory(name));
+/******/ 			}
+/******/ 		}
+/******/ 		fn.e = function(chunkId) {
+/******/ 			if(hotStatus === "ready")
+/******/ 				hotSetStatus("prepare");
+/******/ 			hotChunksLoading++;
+/******/ 			return __webpack_require__.e(chunkId).then(finishChunkLoading, function(err) {
+/******/ 				finishChunkLoading();
+/******/ 				throw err;
+/******/ 			});
+/******/ 	
+/******/ 			function finishChunkLoading() {
+/******/ 				hotChunksLoading--;
+/******/ 				if(hotStatus === "prepare") {
+/******/ 					if(!hotWaitingFilesMap[chunkId]) {
+/******/ 						hotEnsureUpdateChunk(chunkId);
+/******/ 					}
+/******/ 					if(hotChunksLoading === 0 && hotWaitingFiles === 0) {
+/******/ 						hotUpdateDownloaded();
+/******/ 					}
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 		return fn;
+/******/ 	}
+/******/ 	
+/******/ 	function hotCreateModule(moduleId) { // eslint-disable-line no-unused-vars
+/******/ 		var hot = {
+/******/ 			// private stuff
+/******/ 			_acceptedDependencies: {},
+/******/ 			_declinedDependencies: {},
+/******/ 			_selfAccepted: false,
+/******/ 			_selfDeclined: false,
+/******/ 			_disposeHandlers: [],
+/******/ 			_main: hotCurrentChildModule !== moduleId,
+/******/ 	
+/******/ 			// Module API
+/******/ 			active: true,
+/******/ 			accept: function(dep, callback) {
+/******/ 				if(typeof dep === "undefined")
+/******/ 					hot._selfAccepted = true;
+/******/ 				else if(typeof dep === "function")
+/******/ 					hot._selfAccepted = dep;
+/******/ 				else if(typeof dep === "object")
+/******/ 					for(var i = 0; i < dep.length; i++)
+/******/ 						hot._acceptedDependencies[dep[i]] = callback || function() {};
+/******/ 				else
+/******/ 					hot._acceptedDependencies[dep] = callback || function() {};
+/******/ 			},
+/******/ 			decline: function(dep) {
+/******/ 				if(typeof dep === "undefined")
+/******/ 					hot._selfDeclined = true;
+/******/ 				else if(typeof dep === "object")
+/******/ 					for(var i = 0; i < dep.length; i++)
+/******/ 						hot._declinedDependencies[dep[i]] = true;
+/******/ 				else
+/******/ 					hot._declinedDependencies[dep] = true;
+/******/ 			},
+/******/ 			dispose: function(callback) {
+/******/ 				hot._disposeHandlers.push(callback);
+/******/ 			},
+/******/ 			addDisposeHandler: function(callback) {
+/******/ 				hot._disposeHandlers.push(callback);
+/******/ 			},
+/******/ 			removeDisposeHandler: function(callback) {
+/******/ 				var idx = hot._disposeHandlers.indexOf(callback);
+/******/ 				if(idx >= 0) hot._disposeHandlers.splice(idx, 1);
+/******/ 			},
+/******/ 	
+/******/ 			// Management API
+/******/ 			check: hotCheck,
+/******/ 			apply: hotApply,
+/******/ 			status: function(l) {
+/******/ 				if(!l) return hotStatus;
+/******/ 				hotStatusHandlers.push(l);
+/******/ 			},
+/******/ 			addStatusHandler: function(l) {
+/******/ 				hotStatusHandlers.push(l);
+/******/ 			},
+/******/ 			removeStatusHandler: function(l) {
+/******/ 				var idx = hotStatusHandlers.indexOf(l);
+/******/ 				if(idx >= 0) hotStatusHandlers.splice(idx, 1);
+/******/ 			},
+/******/ 	
+/******/ 			//inherit from previous dispose call
+/******/ 			data: hotCurrentModuleData[moduleId]
+/******/ 		};
+/******/ 		hotCurrentChildModule = undefined;
+/******/ 		return hot;
+/******/ 	}
+/******/ 	
+/******/ 	var hotStatusHandlers = [];
+/******/ 	var hotStatus = "idle";
+/******/ 	
+/******/ 	function hotSetStatus(newStatus) {
+/******/ 		hotStatus = newStatus;
+/******/ 		for(var i = 0; i < hotStatusHandlers.length; i++)
+/******/ 			hotStatusHandlers[i].call(null, newStatus);
+/******/ 	}
+/******/ 	
+/******/ 	// while downloading
+/******/ 	var hotWaitingFiles = 0;
+/******/ 	var hotChunksLoading = 0;
+/******/ 	var hotWaitingFilesMap = {};
+/******/ 	var hotRequestedFilesMap = {};
+/******/ 	var hotAvailableFilesMap = {};
+/******/ 	var hotDeferred;
+/******/ 	
+/******/ 	// The update info
+/******/ 	var hotUpdate, hotUpdateNewHash;
+/******/ 	
+/******/ 	function toModuleId(id) {
+/******/ 		var isNumber = (+id) + "" === id;
+/******/ 		return isNumber ? +id : id;
+/******/ 	}
+/******/ 	
+/******/ 	function hotCheck(apply) {
+/******/ 		if(hotStatus !== "idle") throw new Error("check() is only allowed in idle status");
+/******/ 		hotApplyOnUpdate = apply;
+/******/ 		hotSetStatus("check");
+/******/ 		return hotDownloadManifest(hotRequestTimeout).then(function(update) {
+/******/ 			if(!update) {
+/******/ 				hotSetStatus("idle");
+/******/ 				return null;
+/******/ 			}
+/******/ 			hotRequestedFilesMap = {};
+/******/ 			hotWaitingFilesMap = {};
+/******/ 			hotAvailableFilesMap = update.c;
+/******/ 			hotUpdateNewHash = update.h;
+/******/ 	
+/******/ 			hotSetStatus("prepare");
+/******/ 			var promise = new Promise(function(resolve, reject) {
+/******/ 				hotDeferred = {
+/******/ 					resolve: resolve,
+/******/ 					reject: reject
+/******/ 				};
+/******/ 			});
+/******/ 			hotUpdate = {};
+/******/ 			var chunkId = 0;
+/******/ 			{ // eslint-disable-line no-lone-blocks
+/******/ 				/*globals chunkId */
+/******/ 				hotEnsureUpdateChunk(chunkId);
+/******/ 			}
+/******/ 			if(hotStatus === "prepare" && hotChunksLoading === 0 && hotWaitingFiles === 0) {
+/******/ 				hotUpdateDownloaded();
+/******/ 			}
+/******/ 			return promise;
+/******/ 		});
+/******/ 	}
+/******/ 	
+/******/ 	function hotAddUpdateChunk(chunkId, moreModules) { // eslint-disable-line no-unused-vars
+/******/ 		if(!hotAvailableFilesMap[chunkId] || !hotRequestedFilesMap[chunkId])
+/******/ 			return;
+/******/ 		hotRequestedFilesMap[chunkId] = false;
+/******/ 		for(var moduleId in moreModules) {
+/******/ 			if(Object.prototype.hasOwnProperty.call(moreModules, moduleId)) {
+/******/ 				hotUpdate[moduleId] = moreModules[moduleId];
+/******/ 			}
+/******/ 		}
+/******/ 		if(--hotWaitingFiles === 0 && hotChunksLoading === 0) {
+/******/ 			hotUpdateDownloaded();
+/******/ 		}
+/******/ 	}
+/******/ 	
+/******/ 	function hotEnsureUpdateChunk(chunkId) {
+/******/ 		if(!hotAvailableFilesMap[chunkId]) {
+/******/ 			hotWaitingFilesMap[chunkId] = true;
+/******/ 		} else {
+/******/ 			hotRequestedFilesMap[chunkId] = true;
+/******/ 			hotWaitingFiles++;
+/******/ 			hotDownloadUpdateChunk(chunkId);
+/******/ 		}
+/******/ 	}
+/******/ 	
+/******/ 	function hotUpdateDownloaded() {
+/******/ 		hotSetStatus("ready");
+/******/ 		var deferred = hotDeferred;
+/******/ 		hotDeferred = null;
+/******/ 		if(!deferred) return;
+/******/ 		if(hotApplyOnUpdate) {
+/******/ 			// Wrap deferred object in Promise to mark it as a well-handled Promise to
+/******/ 			// avoid triggering uncaught exception warning in Chrome.
+/******/ 			// See https://bugs.chromium.org/p/chromium/issues/detail?id=465666
+/******/ 			Promise.resolve().then(function() {
+/******/ 				return hotApply(hotApplyOnUpdate);
+/******/ 			}).then(
+/******/ 				function(result) {
+/******/ 					deferred.resolve(result);
+/******/ 				},
+/******/ 				function(err) {
+/******/ 					deferred.reject(err);
+/******/ 				}
+/******/ 			);
+/******/ 		} else {
+/******/ 			var outdatedModules = [];
+/******/ 			for(var id in hotUpdate) {
+/******/ 				if(Object.prototype.hasOwnProperty.call(hotUpdate, id)) {
+/******/ 					outdatedModules.push(toModuleId(id));
+/******/ 				}
+/******/ 			}
+/******/ 			deferred.resolve(outdatedModules);
+/******/ 		}
+/******/ 	}
+/******/ 	
+/******/ 	function hotApply(options) {
+/******/ 		if(hotStatus !== "ready") throw new Error("apply() is only allowed in ready status");
+/******/ 		options = options || {};
+/******/ 	
+/******/ 		var cb;
+/******/ 		var i;
+/******/ 		var j;
+/******/ 		var module;
+/******/ 		var moduleId;
+/******/ 	
+/******/ 		function getAffectedStuff(updateModuleId) {
+/******/ 			var outdatedModules = [updateModuleId];
+/******/ 			var outdatedDependencies = {};
+/******/ 	
+/******/ 			var queue = outdatedModules.slice().map(function(id) {
+/******/ 				return {
+/******/ 					chain: [id],
+/******/ 					id: id
+/******/ 				};
+/******/ 			});
+/******/ 			while(queue.length > 0) {
+/******/ 				var queueItem = queue.pop();
+/******/ 				var moduleId = queueItem.id;
+/******/ 				var chain = queueItem.chain;
+/******/ 				module = installedModules[moduleId];
+/******/ 				if(!module || module.hot._selfAccepted)
+/******/ 					continue;
+/******/ 				if(module.hot._selfDeclined) {
+/******/ 					return {
+/******/ 						type: "self-declined",
+/******/ 						chain: chain,
+/******/ 						moduleId: moduleId
+/******/ 					};
+/******/ 				}
+/******/ 				if(module.hot._main) {
+/******/ 					return {
+/******/ 						type: "unaccepted",
+/******/ 						chain: chain,
+/******/ 						moduleId: moduleId
+/******/ 					};
+/******/ 				}
+/******/ 				for(var i = 0; i < module.parents.length; i++) {
+/******/ 					var parentId = module.parents[i];
+/******/ 					var parent = installedModules[parentId];
+/******/ 					if(!parent) continue;
+/******/ 					if(parent.hot._declinedDependencies[moduleId]) {
+/******/ 						return {
+/******/ 							type: "declined",
+/******/ 							chain: chain.concat([parentId]),
+/******/ 							moduleId: moduleId,
+/******/ 							parentId: parentId
+/******/ 						};
+/******/ 					}
+/******/ 					if(outdatedModules.indexOf(parentId) >= 0) continue;
+/******/ 					if(parent.hot._acceptedDependencies[moduleId]) {
+/******/ 						if(!outdatedDependencies[parentId])
+/******/ 							outdatedDependencies[parentId] = [];
+/******/ 						addAllToSet(outdatedDependencies[parentId], [moduleId]);
+/******/ 						continue;
+/******/ 					}
+/******/ 					delete outdatedDependencies[parentId];
+/******/ 					outdatedModules.push(parentId);
+/******/ 					queue.push({
+/******/ 						chain: chain.concat([parentId]),
+/******/ 						id: parentId
+/******/ 					});
+/******/ 				}
+/******/ 			}
+/******/ 	
+/******/ 			return {
+/******/ 				type: "accepted",
+/******/ 				moduleId: updateModuleId,
+/******/ 				outdatedModules: outdatedModules,
+/******/ 				outdatedDependencies: outdatedDependencies
+/******/ 			};
+/******/ 		}
+/******/ 	
+/******/ 		function addAllToSet(a, b) {
+/******/ 			for(var i = 0; i < b.length; i++) {
+/******/ 				var item = b[i];
+/******/ 				if(a.indexOf(item) < 0)
+/******/ 					a.push(item);
+/******/ 			}
+/******/ 		}
+/******/ 	
+/******/ 		// at begin all updates modules are outdated
+/******/ 		// the "outdated" status can propagate to parents if they don't accept the children
+/******/ 		var outdatedDependencies = {};
+/******/ 		var outdatedModules = [];
+/******/ 		var appliedUpdate = {};
+/******/ 	
+/******/ 		var warnUnexpectedRequire = function warnUnexpectedRequire() {
+/******/ 			console.warn("[HMR] unexpected require(" + result.moduleId + ") to disposed module");
+/******/ 		};
+/******/ 	
+/******/ 		for(var id in hotUpdate) {
+/******/ 			if(Object.prototype.hasOwnProperty.call(hotUpdate, id)) {
+/******/ 				moduleId = toModuleId(id);
+/******/ 				var result;
+/******/ 				if(hotUpdate[id]) {
+/******/ 					result = getAffectedStuff(moduleId);
+/******/ 				} else {
+/******/ 					result = {
+/******/ 						type: "disposed",
+/******/ 						moduleId: id
+/******/ 					};
+/******/ 				}
+/******/ 				var abortError = false;
+/******/ 				var doApply = false;
+/******/ 				var doDispose = false;
+/******/ 				var chainInfo = "";
+/******/ 				if(result.chain) {
+/******/ 					chainInfo = "\nUpdate propagation: " + result.chain.join(" -> ");
+/******/ 				}
+/******/ 				switch(result.type) {
+/******/ 					case "self-declined":
+/******/ 						if(options.onDeclined)
+/******/ 							options.onDeclined(result);
+/******/ 						if(!options.ignoreDeclined)
+/******/ 							abortError = new Error("Aborted because of self decline: " + result.moduleId + chainInfo);
+/******/ 						break;
+/******/ 					case "declined":
+/******/ 						if(options.onDeclined)
+/******/ 							options.onDeclined(result);
+/******/ 						if(!options.ignoreDeclined)
+/******/ 							abortError = new Error("Aborted because of declined dependency: " + result.moduleId + " in " + result.parentId + chainInfo);
+/******/ 						break;
+/******/ 					case "unaccepted":
+/******/ 						if(options.onUnaccepted)
+/******/ 							options.onUnaccepted(result);
+/******/ 						if(!options.ignoreUnaccepted)
+/******/ 							abortError = new Error("Aborted because " + moduleId + " is not accepted" + chainInfo);
+/******/ 						break;
+/******/ 					case "accepted":
+/******/ 						if(options.onAccepted)
+/******/ 							options.onAccepted(result);
+/******/ 						doApply = true;
+/******/ 						break;
+/******/ 					case "disposed":
+/******/ 						if(options.onDisposed)
+/******/ 							options.onDisposed(result);
+/******/ 						doDispose = true;
+/******/ 						break;
+/******/ 					default:
+/******/ 						throw new Error("Unexception type " + result.type);
+/******/ 				}
+/******/ 				if(abortError) {
+/******/ 					hotSetStatus("abort");
+/******/ 					return Promise.reject(abortError);
+/******/ 				}
+/******/ 				if(doApply) {
+/******/ 					appliedUpdate[moduleId] = hotUpdate[moduleId];
+/******/ 					addAllToSet(outdatedModules, result.outdatedModules);
+/******/ 					for(moduleId in result.outdatedDependencies) {
+/******/ 						if(Object.prototype.hasOwnProperty.call(result.outdatedDependencies, moduleId)) {
+/******/ 							if(!outdatedDependencies[moduleId])
+/******/ 								outdatedDependencies[moduleId] = [];
+/******/ 							addAllToSet(outdatedDependencies[moduleId], result.outdatedDependencies[moduleId]);
+/******/ 						}
+/******/ 					}
+/******/ 				}
+/******/ 				if(doDispose) {
+/******/ 					addAllToSet(outdatedModules, [result.moduleId]);
+/******/ 					appliedUpdate[moduleId] = warnUnexpectedRequire;
+/******/ 				}
+/******/ 			}
+/******/ 		}
+/******/ 	
+/******/ 		// Store self accepted outdated modules to require them later by the module system
+/******/ 		var outdatedSelfAcceptedModules = [];
+/******/ 		for(i = 0; i < outdatedModules.length; i++) {
+/******/ 			moduleId = outdatedModules[i];
+/******/ 			if(installedModules[moduleId] && installedModules[moduleId].hot._selfAccepted)
+/******/ 				outdatedSelfAcceptedModules.push({
+/******/ 					module: moduleId,
+/******/ 					errorHandler: installedModules[moduleId].hot._selfAccepted
+/******/ 				});
+/******/ 		}
+/******/ 	
+/******/ 		// Now in "dispose" phase
+/******/ 		hotSetStatus("dispose");
+/******/ 		Object.keys(hotAvailableFilesMap).forEach(function(chunkId) {
+/******/ 			if(hotAvailableFilesMap[chunkId] === false) {
+/******/ 				hotDisposeChunk(chunkId);
+/******/ 			}
+/******/ 		});
+/******/ 	
+/******/ 		var idx;
+/******/ 		var queue = outdatedModules.slice();
+/******/ 		while(queue.length > 0) {
+/******/ 			moduleId = queue.pop();
+/******/ 			module = installedModules[moduleId];
+/******/ 			if(!module) continue;
+/******/ 	
+/******/ 			var data = {};
+/******/ 	
+/******/ 			// Call dispose handlers
+/******/ 			var disposeHandlers = module.hot._disposeHandlers;
+/******/ 			for(j = 0; j < disposeHandlers.length; j++) {
+/******/ 				cb = disposeHandlers[j];
+/******/ 				cb(data);
+/******/ 			}
+/******/ 			hotCurrentModuleData[moduleId] = data;
+/******/ 	
+/******/ 			// disable module (this disables requires from this module)
+/******/ 			module.hot.active = false;
+/******/ 	
+/******/ 			// remove module from cache
+/******/ 			delete installedModules[moduleId];
+/******/ 	
+/******/ 			// remove "parents" references from all children
+/******/ 			for(j = 0; j < module.children.length; j++) {
+/******/ 				var child = installedModules[module.children[j]];
+/******/ 				if(!child) continue;
+/******/ 				idx = child.parents.indexOf(moduleId);
+/******/ 				if(idx >= 0) {
+/******/ 					child.parents.splice(idx, 1);
+/******/ 				}
+/******/ 			}
+/******/ 		}
+/******/ 	
+/******/ 		// remove outdated dependency from module children
+/******/ 		var dependency;
+/******/ 		var moduleOutdatedDependencies;
+/******/ 		for(moduleId in outdatedDependencies) {
+/******/ 			if(Object.prototype.hasOwnProperty.call(outdatedDependencies, moduleId)) {
+/******/ 				module = installedModules[moduleId];
+/******/ 				if(module) {
+/******/ 					moduleOutdatedDependencies = outdatedDependencies[moduleId];
+/******/ 					for(j = 0; j < moduleOutdatedDependencies.length; j++) {
+/******/ 						dependency = moduleOutdatedDependencies[j];
+/******/ 						idx = module.children.indexOf(dependency);
+/******/ 						if(idx >= 0) module.children.splice(idx, 1);
+/******/ 					}
+/******/ 				}
+/******/ 			}
+/******/ 		}
+/******/ 	
+/******/ 		// Not in "apply" phase
+/******/ 		hotSetStatus("apply");
+/******/ 	
+/******/ 		hotCurrentHash = hotUpdateNewHash;
+/******/ 	
+/******/ 		// insert new code
+/******/ 		for(moduleId in appliedUpdate) {
+/******/ 			if(Object.prototype.hasOwnProperty.call(appliedUpdate, moduleId)) {
+/******/ 				modules[moduleId] = appliedUpdate[moduleId];
+/******/ 			}
+/******/ 		}
+/******/ 	
+/******/ 		// call accept handlers
+/******/ 		var error = null;
+/******/ 		for(moduleId in outdatedDependencies) {
+/******/ 			if(Object.prototype.hasOwnProperty.call(outdatedDependencies, moduleId)) {
+/******/ 				module = installedModules[moduleId];
+/******/ 				moduleOutdatedDependencies = outdatedDependencies[moduleId];
+/******/ 				var callbacks = [];
+/******/ 				for(i = 0; i < moduleOutdatedDependencies.length; i++) {
+/******/ 					dependency = moduleOutdatedDependencies[i];
+/******/ 					cb = module.hot._acceptedDependencies[dependency];
+/******/ 					if(callbacks.indexOf(cb) >= 0) continue;
+/******/ 					callbacks.push(cb);
+/******/ 				}
+/******/ 				for(i = 0; i < callbacks.length; i++) {
+/******/ 					cb = callbacks[i];
+/******/ 					try {
+/******/ 						cb(moduleOutdatedDependencies);
+/******/ 					} catch(err) {
+/******/ 						if(options.onErrored) {
+/******/ 							options.onErrored({
+/******/ 								type: "accept-errored",
+/******/ 								moduleId: moduleId,
+/******/ 								dependencyId: moduleOutdatedDependencies[i],
+/******/ 								error: err
+/******/ 							});
+/******/ 						}
+/******/ 						if(!options.ignoreErrored) {
+/******/ 							if(!error)
+/******/ 								error = err;
+/******/ 						}
+/******/ 					}
+/******/ 				}
+/******/ 			}
+/******/ 		}
+/******/ 	
+/******/ 		// Load self accepted modules
+/******/ 		for(i = 0; i < outdatedSelfAcceptedModules.length; i++) {
+/******/ 			var item = outdatedSelfAcceptedModules[i];
+/******/ 			moduleId = item.module;
+/******/ 			hotCurrentParents = [moduleId];
+/******/ 			try {
+/******/ 				__webpack_require__(moduleId);
+/******/ 			} catch(err) {
+/******/ 				if(typeof item.errorHandler === "function") {
+/******/ 					try {
+/******/ 						item.errorHandler(err);
+/******/ 					} catch(err2) {
+/******/ 						if(options.onErrored) {
+/******/ 							options.onErrored({
+/******/ 								type: "self-accept-error-handler-errored",
+/******/ 								moduleId: moduleId,
+/******/ 								error: err2,
+/******/ 								orginalError: err
+/******/ 							});
+/******/ 						}
+/******/ 						if(!options.ignoreErrored) {
+/******/ 							if(!error)
+/******/ 								error = err2;
+/******/ 						}
+/******/ 						if(!error)
+/******/ 							error = err;
+/******/ 					}
+/******/ 				} else {
+/******/ 					if(options.onErrored) {
+/******/ 						options.onErrored({
+/******/ 							type: "self-accept-errored",
+/******/ 							moduleId: moduleId,
+/******/ 							error: err
+/******/ 						});
+/******/ 					}
+/******/ 					if(!options.ignoreErrored) {
+/******/ 						if(!error)
+/******/ 							error = err;
+/******/ 					}
+/******/ 				}
+/******/ 			}
+/******/ 		}
+/******/ 	
+/******/ 		// handle errors in accept handlers and self accepted module load
+/******/ 		if(error) {
+/******/ 			hotSetStatus("fail");
+/******/ 			return Promise.reject(error);
+/******/ 		}
+/******/ 	
+/******/ 		hotSetStatus("idle");
+/******/ 		return new Promise(function(resolve) {
+/******/ 			resolve(outdatedModules);
+/******/ 		});
+/******/ 	}
+/******/
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
@@ -13,11 +660,14 @@
 /******/ 		var module = installedModules[moduleId] = {
 /******/ 			i: moduleId,
 /******/ 			l: false,
-/******/ 			exports: {}
+/******/ 			exports: {},
+/******/ 			hot: hotCreateModule(moduleId),
+/******/ 			parents: (hotCurrentParentsTemp = hotCurrentParents, hotCurrentParents = [], hotCurrentParentsTemp),
+/******/ 			children: []
 /******/ 		};
 /******/
 /******/ 		// Execute the module function
-/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, hotCreateRequire(moduleId));
 /******/
 /******/ 		// Flag the module as loaded
 /******/ 		module.l = true;
@@ -59,12 +709,41 @@
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
 /******/
+/******/ 	// __webpack_hash__
+/******/ 	__webpack_require__.h = function() { return hotCurrentHash; };
+/******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return hotCreateRequire(3)(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (immutable) */ __webpack_exports__["default"] = printMe;
+function printMe() {
+  console.log('Updating print.js...');
+}
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(16)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, "body {\n  background: whitesmoke;\n}\n\nbody > section{\n  display: block;\n  margin: 40px auto;\n  width: 880px;\n  max-width: 100%;\n}\n\npre {\n  display: block;\n  font-family: monospace;\n  white-space: pre;\n  margin: 1em 0;\n  padding: 10px;\n  border: 1px solid rgba(211, 211, 211, 0);\n  background: #202020;\n  border-radius: 2px;\n  color: white;\n}\n\n.question section input + label {\n  padding: 10px;\n  margin-top: 10px;\n  border: 1px solid #ccc;\n  background: #deffde;\n  border-radius: 2px;\n}\n\n.question section input:checked + label {\n  display: block;\n}\n\n.question section input:not(:checked) + label {\n  display: none;\n}\n#output > button{\n  margin: 0 0 40px 0;\n}\n\n.hello {\n  color: red;\n}\n\n.media{\n  display: block;\n  margin-top: 25px;\n  margin-bottom: 25px;\n}\n\n.items .item {\n  padding: 0 0 25px;\n  margin-bottom: 25px;\n  border-bottom: 1px solid #ccc;\n}\n\n.output-wrap{\n  margin: 25px auto;\n  padding: 25px;\n  border: 1px solid #ccc;\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -82,104 +761,23 @@ class Animal {
 
 
 /***/ }),
-/* 1 */
+/* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__tests__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__tests_foo__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__tests_api__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__tests_nums__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__tests_wrapper__ = __webpack_require__(7);
 
 
-
-
-
-
-
-const resultColor = "background: green; color: white";
-const errorColor = "background: red; color: white";
-
-const impAmount = (`Amount of imports: ${__WEBPACK_IMPORTED_MODULE_4__tests_nums__["a" /* one */] + __WEBPACK_IMPORTED_MODULE_4__tests_nums__["b" /* two */]}`);
-console.log("impAmount:", impAmount);
-//document.write(`Amount of imports: ${one + two}`);
-
-const questions = [
-  { title: '1. What is the value?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["o" /* square */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["o" /* square */])(11) },
-  { title: '2. What is the value?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["k" /* resultValue */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["k" /* resultValue */])() },
-  { title: '3. What is the value of result?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["a" /* counterThree */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["a" /* counterThree */])() },
-  { title: '4. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["g" /* isOutput */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["g" /* isOutput */])() },
-  { title: '5. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["L" /* whatOutput */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["L" /* whatOutput */])() },
-  { title: '6. What is the value of a, b?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["M" /* whatValue */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["M" /* whatValue */])(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']) },
-  { title: '7. What is the value of result?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["l" /* sevenValue */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["l" /* sevenValue */])() },
-  { title: '8. What is the value of result?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["b" /* eightValue */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["b" /* eightValue */])() },
-  { title: '9. What should the toString function be?  to print "I Amory Blaine am 102 years old."', code: __WEBPACK_IMPORTED_MODULE_1__tests__["m" /* shouldToString */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["m" /* shouldToString */])() },
-  { title: '10. What is the value of result? :', code: __WEBPACK_IMPORTED_MODULE_1__tests__["J" /* whatIs */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["J" /* whatIs */])() },
-  { title: '11. What is the output? :', code: __WEBPACK_IMPORTED_MODULE_1__tests__["K" /* whatIsOutput */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["K" /* whatIsOutput */])() },
-  { title: '12. What is the value of result?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["x" /* twelveResult */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["x" /* twelveResult */])() },
-  { title: '13. What is the value of child.b after this piece of code is executed?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["I" /* whatExecuted */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["I" /* whatExecuted */])() + " b3, c4" },
-  { title: '14. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["e" /* fourteenOutput */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["e" /* fourteenOutput */])() },
-  { title: '15. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["d" /* fifteenOutput */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["d" /* fifteenOutput */])() },
-  { title: '16. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["n" /* sixteenOutput */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["n" /* sixteenOutput */])() },
-  { title: '17. Complete the implementation of this method so that it returns the sum of its arguments. **', code: __WEBPACK_IMPORTED_MODULE_1__tests__["p" /* sumArguments */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["p" /* sumArguments */])(1,2,3,4) },
-  { title: '17.2 sumArgumentsSecond. **', code: __WEBPACK_IMPORTED_MODULE_1__tests__["q" /* sumArgumentsSecond */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["q" /* sumArgumentsSecond */])(0,1,2,3,4) },
-  { title: '18. What is the value of result?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["c" /* eighteenth */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["c" /* eighteenth */])() },
-  { title: '19. What is the value of result?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["h" /* nineteenth */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["h" /* nineteenth */])() },
-  { title: '20. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["y" /* twentieth */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["y" /* twentieth */])() },
-  { title: '21. What is the value of results?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["D" /* twentyOne */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["D" /* twentyOne */])() },
-  { title: '22. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["H" /* twentyTwo */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["H" /* twentyTwo */])() },
-  { title: '23. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["G" /* twentyThree */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["G" /* twentyThree */])() },
-  { title: '24. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["B" /* twentyFour */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["B" /* twentyFour */])() },
-  { title: '25. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["A" /* twentyFive */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["A" /* twentyFive */])() },
-  { title: '26. What is the value of pie?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["F" /* twentySix */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["F" /* twentySix */])() },
-  { title: '27. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["E" /* twentySeven */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["E" /* twentySeven */])() },
-  { title: '28. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["z" /* twentyEight */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["z" /* twentyEight */])() },
-  { title: '29. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["C" /* twentyNine */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["C" /* twentyNine */])() },
-  { title: '30. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["u" /* thirtyOutput */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["u" /* thirtyOutput */])() },
-  { title: '31. What is the value of message?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["t" /* thirtyOne */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["t" /* thirtyOne */])() },
-  { title: '32. What is the value of matches?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["w" /* thirtyTwo */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["w" /* thirtyTwo */])() },
-  { title: '33. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["v" /* thirtyThree */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["v" /* thirtyThree */])() },
-  { title: '34. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["s" /* thirtyFour */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["s" /* thirtyFour */])() },
-  { title: '35. What is the output?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["r" /* thirtyFive */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["r" /* thirtyFive */])() },
-  { title: '36. What is the result?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["j" /* promiseRes */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["j" /* promiseRes */])() },
-  { title: '37. What is the result?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["f" /* intRes */] },
-  { title: '38. What is the result?', code: __WEBPACK_IMPORTED_MODULE_1__tests__["i" /* numRes */], result: Object(__WEBPACK_IMPORTED_MODULE_1__tests__["i" /* numRes */])() }
-];
-
-const marfooter = `
-  <section id="output">
-    <h2>37. What is the result? tmp</h2>
-    <button class="primary" role="button" data-role="see">Action</button>
-  </section>
-`;
-
-//vsiake asenhr dno
-Object(__WEBPACK_IMPORTED_MODULE_3__tests_api__["a" /* api */])();
-
-function component() {
-  var element = document.createElement('section');
-  element.innerHTML = __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.join(['<h1>JS base</h1>', Object(__WEBPACK_IMPORTED_MODULE_2__tests_foo__["a" /* foo */])(questions), marfooter], ' ');
-  return element;
-}
-document.body.appendChild(component());
-
-//main action
-Object(__WEBPACK_IMPORTED_MODULE_1__tests__["f" /* intRes */])();
-
-//results
-console.log("%c 13. What is the value of child.b after this piece of code is executed?", resultColor, Object(__WEBPACK_IMPORTED_MODULE_1__tests__["I" /* whatExecuted */])());
-console.log("%c 17. Complete the implementation of this method so that it returns the sum of its arguments. :", resultColor, Object(__WEBPACK_IMPORTED_MODULE_1__tests__["p" /* sumArguments */])(1,2,3,4));
-console.log("%c 17.2 sumArgumentsSecond. :", resultColor, Object(__WEBPACK_IMPORTED_MODULE_1__tests__["q" /* sumArgumentsSecond */])(0,1,2,3,4));
-console.log("%c 20. What is the output? :", errorColor, Object(__WEBPACK_IMPORTED_MODULE_1__tests__["y" /* twentieth */])());
-console.log("%c 33. What is the output? :", errorColor, Object(__WEBPACK_IMPORTED_MODULE_1__tests__["v" /* thirtyThree */])());
-console.log("=====================//=====================");
+//import main from "./main";
+Object(__WEBPACK_IMPORTED_MODULE_1__tests_wrapper__["a" /* default */])();
+//main();
 
 
 /***/ }),
-/* 2 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, module) {var __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -17268,10 +17866,10 @@ console.log("=====================//=====================");
   }
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(4)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5), __webpack_require__(6)(module)))
 
 /***/ }),
-/* 3 */
+/* 5 */
 /***/ (function(module, exports) {
 
 var g;
@@ -17298,7 +17896,7 @@ module.exports = g;
 
 
 /***/ }),
-/* 4 */
+/* 6 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -17326,7 +17924,149 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 5 */
+/* 7 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = testWrapper;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0____ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__foo__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__nums__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__inj__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__print__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__style_css__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__style_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5__style_css__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__icon_jpg__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__icon_jpg___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6__icon_jpg__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__data_xml__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__data_xml___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7__data_xml__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__maths_js__ = __webpack_require__(21);
+
+
+//components
+
+
+
+
+
+
+
+
+
+
+const resultColor = "background: green; color: white";
+const errorColor = "background: red; color: white";
+const successColor = "background: #28a745; color: white";
+
+function testWrapper() {
+  console.log('MountWrapper!');
+
+  const impAmount = (`Amount of imports: ${__WEBPACK_IMPORTED_MODULE_2__nums__["a" /* one */] + __WEBPACK_IMPORTED_MODULE_2__nums__["b" /* two */]}`);
+  console.log("%c impAmount:", successColor, impAmount);
+
+  //questions views
+  const questions = [
+    { title: '1. What is the value?', code: __WEBPACK_IMPORTED_MODULE_0____["o" /* square */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["o" /* square */])(11) },
+    { title: '2. What is the value?', code: __WEBPACK_IMPORTED_MODULE_0____["k" /* resultValue */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["k" /* resultValue */])() },
+    { title: '3. What is the value of result?', code: __WEBPACK_IMPORTED_MODULE_0____["a" /* counterThree */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["a" /* counterThree */])() },
+    { title: '4. What is the output?', code: __WEBPACK_IMPORTED_MODULE_0____["g" /* isOutput */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["g" /* isOutput */])() },
+    { title: '5. What is the output?', code: __WEBPACK_IMPORTED_MODULE_0____["L" /* whatOutput */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["L" /* whatOutput */])() },
+    { title: '6. What is the value of a, b?', code: __WEBPACK_IMPORTED_MODULE_0____["M" /* whatValue */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["M" /* whatValue */])(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']) },
+    { title: '7. What is the value of result?', code: __WEBPACK_IMPORTED_MODULE_0____["l" /* sevenValue */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["l" /* sevenValue */])() },
+    { title: '8. What is the value of result?', code: __WEBPACK_IMPORTED_MODULE_0____["b" /* eightValue */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["b" /* eightValue */])() },
+    { title: '9. What should the toString function be?  to print "I Amory Blaine am 102 years old."', code: __WEBPACK_IMPORTED_MODULE_0____["m" /* shouldToString */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["m" /* shouldToString */])() },
+    { title: '10. What is the value of result? :', code: __WEBPACK_IMPORTED_MODULE_0____["J" /* whatIs */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["J" /* whatIs */])() },
+    { title: '11. What is the output? :', code: __WEBPACK_IMPORTED_MODULE_0____["K" /* whatIsOutput */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["K" /* whatIsOutput */])() },
+    { title: '12. What is the value of result?', code: __WEBPACK_IMPORTED_MODULE_0____["x" /* twelveResult */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["x" /* twelveResult */])() },
+    { title: '13. What is the value of child.b after this piece of code is executed?', code: __WEBPACK_IMPORTED_MODULE_0____["I" /* whatExecuted */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["I" /* whatExecuted */])() + " b3, c4" },
+    { title: '14. What is the output?', code: __WEBPACK_IMPORTED_MODULE_0____["e" /* fourteenOutput */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["e" /* fourteenOutput */])() },
+    { title: '15. What is the output?', code: __WEBPACK_IMPORTED_MODULE_0____["d" /* fifteenOutput */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["d" /* fifteenOutput */])() },
+    { title: '16. What is the output?', code: __WEBPACK_IMPORTED_MODULE_0____["n" /* sixteenOutput */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["n" /* sixteenOutput */])() },
+    { title: '17. Complete the implementation of this method so that it returns the sum of its arguments. **', code: __WEBPACK_IMPORTED_MODULE_0____["p" /* sumArguments */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["p" /* sumArguments */])(1,2,3,4) },
+    { title: '17.2 sumArgumentsSecond. **', code: __WEBPACK_IMPORTED_MODULE_0____["q" /* sumArgumentsSecond */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["q" /* sumArgumentsSecond */])(0,1,2,3,4) },
+    { title: '18. What is the value of result?', code: __WEBPACK_IMPORTED_MODULE_0____["c" /* eighteenth */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["c" /* eighteenth */])() },
+    { title: '19. What is the value of result?', code: __WEBPACK_IMPORTED_MODULE_0____["h" /* nineteenth */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["h" /* nineteenth */])() },
+    { title: '20. What is the output?', code: __WEBPACK_IMPORTED_MODULE_0____["y" /* twentieth */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["y" /* twentieth */])() },
+    { title: '21. What is the value of results?', code: __WEBPACK_IMPORTED_MODULE_0____["D" /* twentyOne */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["D" /* twentyOne */])() },
+    { title: '22. What is the output?', code: __WEBPACK_IMPORTED_MODULE_0____["H" /* twentyTwo */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["H" /* twentyTwo */])() },
+    { title: '23. What is the output?', code: __WEBPACK_IMPORTED_MODULE_0____["G" /* twentyThree */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["G" /* twentyThree */])() },
+    { title: '24. What is the output?', code: __WEBPACK_IMPORTED_MODULE_0____["B" /* twentyFour */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["B" /* twentyFour */])() },
+    { title: '25. What is the output?', code: __WEBPACK_IMPORTED_MODULE_0____["A" /* twentyFive */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["A" /* twentyFive */])() },
+    { title: '26. What is the value of pie?', code: __WEBPACK_IMPORTED_MODULE_0____["F" /* twentySix */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["F" /* twentySix */])() },
+    { title: '27. What is the output?', code: __WEBPACK_IMPORTED_MODULE_0____["E" /* twentySeven */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["E" /* twentySeven */])() },
+    { title: '28. What is the output?', code: __WEBPACK_IMPORTED_MODULE_0____["z" /* twentyEight */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["z" /* twentyEight */])() },
+    { title: '29. What is the output?', code: __WEBPACK_IMPORTED_MODULE_0____["C" /* twentyNine */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["C" /* twentyNine */])() },
+    { title: '30. What is the output?', code: __WEBPACK_IMPORTED_MODULE_0____["u" /* thirtyOutput */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["u" /* thirtyOutput */])() },
+    { title: '31. What is the value of message?', code: __WEBPACK_IMPORTED_MODULE_0____["t" /* thirtyOne */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["t" /* thirtyOne */])() },
+    { title: '32. What is the value of matches?', code: __WEBPACK_IMPORTED_MODULE_0____["w" /* thirtyTwo */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["w" /* thirtyTwo */])() },
+    { title: '33. What is the output?', code: __WEBPACK_IMPORTED_MODULE_0____["v" /* thirtyThree */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["v" /* thirtyThree */])() },
+    { title: '34. What is the output?', code: __WEBPACK_IMPORTED_MODULE_0____["s" /* thirtyFour */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["s" /* thirtyFour */])() },
+    { title: '35. What is the output?', code: __WEBPACK_IMPORTED_MODULE_0____["r" /* thirtyFive */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["r" /* thirtyFive */])() },
+    { title: '36. What is the result?', code: __WEBPACK_IMPORTED_MODULE_0____["j" /* promiseRes */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["j" /* promiseRes */])() },
+    { title: '37. What is the result?', code: __WEBPACK_IMPORTED_MODULE_0____["f" /* intRes */] },
+    { title: '38. What is the result?', code: __WEBPACK_IMPORTED_MODULE_0____["i" /* numRes */], result: Object(__WEBPACK_IMPORTED_MODULE_0____["i" /* numRes */])() }
+  ];
+
+  //tmp
+  const footerOutput = `
+    <section id="output">
+      <h2>37. What is the result? tmp</h2>
+      <button class="primary hello" role="button" data-role="see">Action</button>
+    </section>
+  `;
+
+  function component() {
+    var element = document.createElement('section');
+    var btn = document.createElement('button');
+
+    element.innerHTML = _.join(['<h1>JS base</h1>', Object(__WEBPACK_IMPORTED_MODULE_1__foo__["a" /* foo */])(questions), footerOutput], ' ');
+
+    var myIcon = new Image();
+    myIcon.src = __WEBPACK_IMPORTED_MODULE_6__icon_jpg___default.a;
+    myIcon.className = 'media';
+    element.appendChild(myIcon);
+    console.log(__WEBPACK_IMPORTED_MODULE_7__data_xml___default.a);
+
+    btn.innerHTML = 'Click me and check the console printMe!';
+    btn.onclick = __WEBPACK_IMPORTED_MODULE_4__print__["default"];
+    element.appendChild(btn);
+
+    return element;
+  }
+
+  //document.body.appendChild(component());
+  let element = component(); // Store the element to re-render on print.js changes
+  document.body.appendChild(element);
+
+  //hot
+  if (true) {
+    module.hot.accept(0, function(__WEBPACK_OUTDATED_DEPENDENCIES__) { /* harmony import */ __WEBPACK_IMPORTED_MODULE_4__print__ = __webpack_require__(0); (function() {
+      console.log('Accepting the updated printMe module!');
+      //printMe();
+      document.body.removeChild(element);
+      element = component(); // Re-render the "component" to update the click handler
+      document.body.appendChild(element);
+    })(__WEBPACK_OUTDATED_DEPENDENCIES__); })
+  }
+
+  //loader
+  Object(__WEBPACK_IMPORTED_MODULE_3__inj__["a" /* injFun */])();
+
+  //tests
+  Object(__WEBPACK_IMPORTED_MODULE_0____["f" /* intRes */])();
+  //results
+  console.log("%c 13. What is the value of child.b after this piece of code is executed?", resultColor, Object(__WEBPACK_IMPORTED_MODULE_0____["I" /* whatExecuted */])());
+  console.log("%c 17. Complete the implementation of this method so that it returns the sum of its arguments. :", resultColor, Object(__WEBPACK_IMPORTED_MODULE_0____["p" /* sumArguments */])(1,2,3,4));
+  console.log("%c 17.2 sumArgumentsSecond. :", resultColor, Object(__WEBPACK_IMPORTED_MODULE_0____["q" /* sumArgumentsSecond */])(0,1,2,3,4));
+  console.log("%c 20. What is the output? :", errorColor, Object(__WEBPACK_IMPORTED_MODULE_0____["y" /* twentieth */])());
+  console.log("%c 33. What is the output? :", errorColor, Object(__WEBPACK_IMPORTED_MODULE_0____["v" /* thirtyThree */])());
+  console.log("=====================//=====================");
+
+}
+
+
+/***/ }),
+/* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -17370,8 +18110,8 @@ module.exports = function(module) {
 /* harmony export (immutable) */ __webpack_exports__["j"] = promiseRes;
 /* harmony export (immutable) */ __webpack_exports__["f"] = intRes;
 /* harmony export (immutable) */ __webpack_exports__["i"] = numRes;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__animal__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__bar__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__animal__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__bar__ = __webpack_require__(9);
 
 
 
@@ -17804,11 +18544,11 @@ function numRes() {
 
 
 /***/ }),
-/* 6 */
+/* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__animal__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__animal__ = __webpack_require__(2);
 
 
 const outputwrap = `
@@ -17845,7 +18585,7 @@ class Bar {
 
 
 /***/ }),
-/* 7 */
+/* 10 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -17869,21 +18609,7 @@ function foo(items = []) {
 
 
 /***/ }),
-/* 8 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (immutable) */ __webpack_exports__["a"] = api;
-//point
-function api(items = []) {
-  const markup = "api";
-  console.log(markup);
-  return markup;
-}
-
-
-/***/ }),
-/* 9 */
+/* 11 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -17894,6 +18620,688 @@ let one = 1;
 let two = 2;
 
 
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = injFun;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__api__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__table__ = __webpack_require__(14);
+
+
+
+function injFun() {
+  const films = Object(__WEBPACK_IMPORTED_MODULE_0__api__["a" /* fetchInt */])('https://ghibliapi.herokuapp.com/films/');
+  const beers = Object(__WEBPACK_IMPORTED_MODULE_0__api__["a" /* fetchInt */])('https://api.punkapi.com/v2/beers?page=1&per_page=20');
+  Promise.all([films, beers]).then(values => {
+    const resfilms = Object(__WEBPACK_IMPORTED_MODULE_1__table__["a" /* tableFilms */])(values[0]);
+    //console.log("values[0]:", values[0]);
+    function comp() {
+      var element = document.createElement('section');
+      element.innerHTML = _.join([resfilms], ' ');
+      return element;
+    }
+    document.body.appendChild(comp());
+  });
+}
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+function status(response) {
+  if (response.status >= 200 && response.status < 300) {
+    return Promise.resolve(response)
+  } else {
+    return Promise.reject(new Error(response.statusText))
+  }
+}
+
+function json(response) {
+  return response.json();
+}
+
+var myInit = {method: 'GET'};
+
+const fetchInt = (url) => {
+  const res = fetch(url, myInit)
+    .then(status)
+    .then(json)
+    .then(function(data) {
+      return data;
+    }).catch(function(error) {
+      console.log('Request failed', error);
+    });
+  return res;
+};
+/* harmony export (immutable) */ __webpack_exports__["a"] = fetchInt;
+
+
+
+/***/ }),
+/* 14 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = tableFilms;
+//point
+//import './items.css';
+
+function tableFilms(items = []) {
+  const markup = `
+    <div class="table items">
+      ${items.map(item => `<div class="qu item">
+        <h2>${item.title}</h2>
+        <small>${item.director}</small>
+        <p class="description">${item.description}</p>
+        <strong>Score: ${item.rt_score}</strong>
+      </div>`).join('')}
+    </div>
+  `;
+  return markup;
+}
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(1);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// Prepare cssTransformation
+var transform;
+
+var options = {}
+options.transform = transform
+// add the styles to the DOM
+var update = __webpack_require__(17)(content, options);
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(true) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept(1, function() {
+			var newContent = __webpack_require__(1);
+			if(typeof newContent === 'string') newContent = [[module.i, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports) {
+
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+// css base code, injected by the css-loader
+module.exports = function(useSourceMap) {
+	var list = [];
+
+	// return the list of modules as css string
+	list.toString = function toString() {
+		return this.map(function (item) {
+			var content = cssWithMappingToString(item, useSourceMap);
+			if(item[2]) {
+				return "@media " + item[2] + "{" + content + "}";
+			} else {
+				return content;
+			}
+		}).join("");
+	};
+
+	// import a list of modules into the list
+	list.i = function(modules, mediaQuery) {
+		if(typeof modules === "string")
+			modules = [[null, modules, ""]];
+		var alreadyImportedModules = {};
+		for(var i = 0; i < this.length; i++) {
+			var id = this[i][0];
+			if(typeof id === "number")
+				alreadyImportedModules[id] = true;
+		}
+		for(i = 0; i < modules.length; i++) {
+			var item = modules[i];
+			// skip already imported module
+			// this implementation is not 100% perfect for weird media query combinations
+			//  when a module is imported multiple times with different media queries.
+			//  I hope this will never occur (Hey this way we have smaller bundles)
+			if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+				if(mediaQuery && !item[2]) {
+					item[2] = mediaQuery;
+				} else if(mediaQuery) {
+					item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+				}
+				list.push(item);
+			}
+		}
+	};
+	return list;
+};
+
+function cssWithMappingToString(item, useSourceMap) {
+	var content = item[1] || '';
+	var cssMapping = item[3];
+	if (!cssMapping) {
+		return content;
+	}
+
+	if (useSourceMap && typeof btoa === 'function') {
+		var sourceMapping = toComment(cssMapping);
+		var sourceURLs = cssMapping.sources.map(function (source) {
+			return '/*# sourceURL=' + cssMapping.sourceRoot + source + ' */'
+		});
+
+		return [content].concat(sourceURLs).concat([sourceMapping]).join('\n');
+	}
+
+	return [content].join('\n');
+}
+
+// Adapted from convert-source-map (MIT)
+function toComment(sourceMap) {
+	// eslint-disable-next-line no-undef
+	var base64 = btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap))));
+	var data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;
+
+	return '/*# ' + data + ' */';
+}
+
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+
+var stylesInDom = {};
+
+var	memoize = function (fn) {
+	var memo;
+
+	return function () {
+		if (typeof memo === "undefined") memo = fn.apply(this, arguments);
+		return memo;
+	};
+};
+
+var isOldIE = memoize(function () {
+	// Test for IE <= 9 as proposed by Browserhacks
+	// @see http://browserhacks.com/#hack-e71d8692f65334173fee715c222cb805
+	// Tests for existence of standard globals is to allow style-loader
+	// to operate correctly into non-standard environments
+	// @see https://github.com/webpack-contrib/style-loader/issues/177
+	return window && document && document.all && !window.atob;
+});
+
+var getElement = (function (fn) {
+	var memo = {};
+
+	return function(selector) {
+		if (typeof memo[selector] === "undefined") {
+			memo[selector] = fn.call(this, selector);
+		}
+
+		return memo[selector]
+	};
+})(function (target) {
+	return document.querySelector(target)
+});
+
+var singleton = null;
+var	singletonCounter = 0;
+var	stylesInsertedAtTop = [];
+
+var	fixUrls = __webpack_require__(18);
+
+module.exports = function(list, options) {
+	if (typeof DEBUG !== "undefined" && DEBUG) {
+		if (typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
+	}
+
+	options = options || {};
+
+	options.attrs = typeof options.attrs === "object" ? options.attrs : {};
+
+	// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+	// tags it will allow on a page
+	if (!options.singleton) options.singleton = isOldIE();
+
+	// By default, add <style> tags to the <head> element
+	if (!options.insertInto) options.insertInto = "head";
+
+	// By default, add <style> tags to the bottom of the target
+	if (!options.insertAt) options.insertAt = "bottom";
+
+	var styles = listToStyles(list, options);
+
+	addStylesToDom(styles, options);
+
+	return function update (newList) {
+		var mayRemove = [];
+
+		for (var i = 0; i < styles.length; i++) {
+			var item = styles[i];
+			var domStyle = stylesInDom[item.id];
+
+			domStyle.refs--;
+			mayRemove.push(domStyle);
+		}
+
+		if(newList) {
+			var newStyles = listToStyles(newList, options);
+			addStylesToDom(newStyles, options);
+		}
+
+		for (var i = 0; i < mayRemove.length; i++) {
+			var domStyle = mayRemove[i];
+
+			if(domStyle.refs === 0) {
+				for (var j = 0; j < domStyle.parts.length; j++) domStyle.parts[j]();
+
+				delete stylesInDom[domStyle.id];
+			}
+		}
+	};
+};
+
+function addStylesToDom (styles, options) {
+	for (var i = 0; i < styles.length; i++) {
+		var item = styles[i];
+		var domStyle = stylesInDom[item.id];
+
+		if(domStyle) {
+			domStyle.refs++;
+
+			for(var j = 0; j < domStyle.parts.length; j++) {
+				domStyle.parts[j](item.parts[j]);
+			}
+
+			for(; j < item.parts.length; j++) {
+				domStyle.parts.push(addStyle(item.parts[j], options));
+			}
+		} else {
+			var parts = [];
+
+			for(var j = 0; j < item.parts.length; j++) {
+				parts.push(addStyle(item.parts[j], options));
+			}
+
+			stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
+		}
+	}
+}
+
+function listToStyles (list, options) {
+	var styles = [];
+	var newStyles = {};
+
+	for (var i = 0; i < list.length; i++) {
+		var item = list[i];
+		var id = options.base ? item[0] + options.base : item[0];
+		var css = item[1];
+		var media = item[2];
+		var sourceMap = item[3];
+		var part = {css: css, media: media, sourceMap: sourceMap};
+
+		if(!newStyles[id]) styles.push(newStyles[id] = {id: id, parts: [part]});
+		else newStyles[id].parts.push(part);
+	}
+
+	return styles;
+}
+
+function insertStyleElement (options, style) {
+	var target = getElement(options.insertInto)
+
+	if (!target) {
+		throw new Error("Couldn't find a style target. This probably means that the value for the 'insertInto' parameter is invalid.");
+	}
+
+	var lastStyleElementInsertedAtTop = stylesInsertedAtTop[stylesInsertedAtTop.length - 1];
+
+	if (options.insertAt === "top") {
+		if (!lastStyleElementInsertedAtTop) {
+			target.insertBefore(style, target.firstChild);
+		} else if (lastStyleElementInsertedAtTop.nextSibling) {
+			target.insertBefore(style, lastStyleElementInsertedAtTop.nextSibling);
+		} else {
+			target.appendChild(style);
+		}
+		stylesInsertedAtTop.push(style);
+	} else if (options.insertAt === "bottom") {
+		target.appendChild(style);
+	} else {
+		throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");
+	}
+}
+
+function removeStyleElement (style) {
+	if (style.parentNode === null) return false;
+	style.parentNode.removeChild(style);
+
+	var idx = stylesInsertedAtTop.indexOf(style);
+	if(idx >= 0) {
+		stylesInsertedAtTop.splice(idx, 1);
+	}
+}
+
+function createStyleElement (options) {
+	var style = document.createElement("style");
+
+	options.attrs.type = "text/css";
+
+	addAttrs(style, options.attrs);
+	insertStyleElement(options, style);
+
+	return style;
+}
+
+function createLinkElement (options) {
+	var link = document.createElement("link");
+
+	options.attrs.type = "text/css";
+	options.attrs.rel = "stylesheet";
+
+	addAttrs(link, options.attrs);
+	insertStyleElement(options, link);
+
+	return link;
+}
+
+function addAttrs (el, attrs) {
+	Object.keys(attrs).forEach(function (key) {
+		el.setAttribute(key, attrs[key]);
+	});
+}
+
+function addStyle (obj, options) {
+	var style, update, remove, result;
+
+	// If a transform function was defined, run it on the css
+	if (options.transform && obj.css) {
+	    result = options.transform(obj.css);
+
+	    if (result) {
+	    	// If transform returns a value, use that instead of the original css.
+	    	// This allows running runtime transformations on the css.
+	    	obj.css = result;
+	    } else {
+	    	// If the transform function returns a falsy value, don't add this css.
+	    	// This allows conditional loading of css
+	    	return function() {
+	    		// noop
+	    	};
+	    }
+	}
+
+	if (options.singleton) {
+		var styleIndex = singletonCounter++;
+
+		style = singleton || (singleton = createStyleElement(options));
+
+		update = applyToSingletonTag.bind(null, style, styleIndex, false);
+		remove = applyToSingletonTag.bind(null, style, styleIndex, true);
+
+	} else if (
+		obj.sourceMap &&
+		typeof URL === "function" &&
+		typeof URL.createObjectURL === "function" &&
+		typeof URL.revokeObjectURL === "function" &&
+		typeof Blob === "function" &&
+		typeof btoa === "function"
+	) {
+		style = createLinkElement(options);
+		update = updateLink.bind(null, style, options);
+		remove = function () {
+			removeStyleElement(style);
+
+			if(style.href) URL.revokeObjectURL(style.href);
+		};
+	} else {
+		style = createStyleElement(options);
+		update = applyToTag.bind(null, style);
+		remove = function () {
+			removeStyleElement(style);
+		};
+	}
+
+	update(obj);
+
+	return function updateStyle (newObj) {
+		if (newObj) {
+			if (
+				newObj.css === obj.css &&
+				newObj.media === obj.media &&
+				newObj.sourceMap === obj.sourceMap
+			) {
+				return;
+			}
+
+			update(obj = newObj);
+		} else {
+			remove();
+		}
+	};
+}
+
+var replaceText = (function () {
+	var textStore = [];
+
+	return function (index, replacement) {
+		textStore[index] = replacement;
+
+		return textStore.filter(Boolean).join('\n');
+	};
+})();
+
+function applyToSingletonTag (style, index, remove, obj) {
+	var css = remove ? "" : obj.css;
+
+	if (style.styleSheet) {
+		style.styleSheet.cssText = replaceText(index, css);
+	} else {
+		var cssNode = document.createTextNode(css);
+		var childNodes = style.childNodes;
+
+		if (childNodes[index]) style.removeChild(childNodes[index]);
+
+		if (childNodes.length) {
+			style.insertBefore(cssNode, childNodes[index]);
+		} else {
+			style.appendChild(cssNode);
+		}
+	}
+}
+
+function applyToTag (style, obj) {
+	var css = obj.css;
+	var media = obj.media;
+
+	if(media) {
+		style.setAttribute("media", media)
+	}
+
+	if(style.styleSheet) {
+		style.styleSheet.cssText = css;
+	} else {
+		while(style.firstChild) {
+			style.removeChild(style.firstChild);
+		}
+
+		style.appendChild(document.createTextNode(css));
+	}
+}
+
+function updateLink (link, options, obj) {
+	var css = obj.css;
+	var sourceMap = obj.sourceMap;
+
+	/*
+		If convertToAbsoluteUrls isn't defined, but sourcemaps are enabled
+		and there is no publicPath defined then lets turn convertToAbsoluteUrls
+		on by default.  Otherwise default to the convertToAbsoluteUrls option
+		directly
+	*/
+	var autoFixUrls = options.convertToAbsoluteUrls === undefined && sourceMap;
+
+	if (options.convertToAbsoluteUrls || autoFixUrls) {
+		css = fixUrls(css);
+	}
+
+	if (sourceMap) {
+		// http://stackoverflow.com/a/26603875
+		css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
+	}
+
+	var blob = new Blob([css], { type: "text/css" });
+
+	var oldSrc = link.href;
+
+	link.href = URL.createObjectURL(blob);
+
+	if(oldSrc) URL.revokeObjectURL(oldSrc);
+}
+
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports) {
+
+
+/**
+ * When source maps are enabled, `style-loader` uses a link element with a data-uri to
+ * embed the css on the page. This breaks all relative urls because now they are relative to a
+ * bundle instead of the current page.
+ *
+ * One solution is to only use full urls, but that may be impossible.
+ *
+ * Instead, this function "fixes" the relative urls to be absolute according to the current page location.
+ *
+ * A rudimentary test suite is located at `test/fixUrls.js` and can be run via the `npm test` command.
+ *
+ */
+
+module.exports = function (css) {
+  // get current location
+  var location = typeof window !== "undefined" && window.location;
+
+  if (!location) {
+    throw new Error("fixUrls requires window.location");
+  }
+
+	// blank or null?
+	if (!css || typeof css !== "string") {
+	  return css;
+  }
+
+  var baseUrl = location.protocol + "//" + location.host;
+  var currentDir = baseUrl + location.pathname.replace(/\/[^\/]*$/, "/");
+
+	// convert each url(...)
+	/*
+	This regular expression is just a way to recursively match brackets within
+	a string.
+
+	 /url\s*\(  = Match on the word "url" with any whitespace after it and then a parens
+	   (  = Start a capturing group
+	     (?:  = Start a non-capturing group
+	         [^)(]  = Match anything that isn't a parentheses
+	         |  = OR
+	         \(  = Match a start parentheses
+	             (?:  = Start another non-capturing groups
+	                 [^)(]+  = Match anything that isn't a parentheses
+	                 |  = OR
+	                 \(  = Match a start parentheses
+	                     [^)(]*  = Match anything that isn't a parentheses
+	                 \)  = Match a end parentheses
+	             )  = End Group
+              *\) = Match anything and then a close parens
+          )  = Close non-capturing group
+          *  = Match anything
+       )  = Close capturing group
+	 \)  = Match a close parens
+
+	 /gi  = Get all matches, not the first.  Be case insensitive.
+	 */
+	var fixedCss = css.replace(/url\s*\(((?:[^)(]|\((?:[^)(]+|\([^)(]*\))*\))*)\)/gi, function(fullMatch, origUrl) {
+		// strip quotes (if they exist)
+		var unquotedOrigUrl = origUrl
+			.trim()
+			.replace(/^"(.*)"$/, function(o, $1){ return $1; })
+			.replace(/^'(.*)'$/, function(o, $1){ return $1; });
+
+		// already a full url? no change
+		if (/^(#|data:|http:\/\/|https:\/\/|file:\/\/\/)/i.test(unquotedOrigUrl)) {
+		  return fullMatch;
+		}
+
+		// convert the url to a full url
+		var newUrl;
+
+		if (unquotedOrigUrl.indexOf("//") === 0) {
+		  	//TODO: should we add protocol?
+			newUrl = unquotedOrigUrl;
+		} else if (unquotedOrigUrl.indexOf("/") === 0) {
+			// path should be relative to the base url
+			newUrl = baseUrl + unquotedOrigUrl; // already starts with '/'
+		} else {
+			// path should be relative to current directory
+			newUrl = currentDir + unquotedOrigUrl.replace(/^\.\//, ""); // Strip leading './'
+		}
+
+		// send back the fixed url(...)
+		return "url(" + JSON.stringify(newUrl) + ")";
+	});
+
+	// send back the fixed css
+	return fixedCss;
+};
+
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__.p + "2d7facfd3b9367080a986636e76c8e7b.jpg";
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports) {
+
+module.exports = {"note":{"to":["Mary"],"from":["John"],"heading":["Reminder"],"body":["Call Cindy on Tuesday"]}}
+
+/***/ }),
+/* 21 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* unused harmony export square */
+/* unused harmony export cube */
+// This function isn't used anywhere
+function square(x) {
+  return x * x;
+}
+
+// This function gets included
+function cube(x) {
+  return x * x * x;
+}
 
 
 /***/ })
