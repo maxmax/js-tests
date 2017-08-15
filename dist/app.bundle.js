@@ -60,7 +60,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "7b8bc72c561af5f4a895"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "25996fc7fdbfbe222060"; // eslint-disable-line no-unused-vars
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
@@ -771,7 +771,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__tests_wrapper__ = __webpack_require__(7);
 
 
+//import main from "./main";
 Object(__WEBPACK_IMPORTED_MODULE_1__tests_wrapper__["a" /* default */])();
+//main();
 
 
 /***/ }),
