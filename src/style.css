@@ -1,0 +1,63 @@
+body {
+  background: whitesmoke;
+}
+
+body > section{
+  display: block;
+  margin: 40px auto;
+  width: 880px;
+  max-width: 100%;
+}
+
+pre {
+  display: block;
+  font-family: monospace;
+  white-space: pre;
+  margin: 1em 0;
+  padding: 10px;
+  border: 1px solid rgba(211, 211, 211, 0);
+  background: #202020;
+  border-radius: 2px;
+  color: white;
+}
+
+.question section input + label {
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  background: #deffde;
+  border-radius: 2px;
+}
+
+.question section input:checked + label {
+  display: block;
+}
+
+.question section input:not(:checked) + label {
+  display: none;
+}
+#output > button{
+  margin: 0 0 40px 0;
+}
+
+.hello {
+  color: red;
+}
+
+.media{
+  display: block;
+  margin-top: 25px;
+  margin-bottom: 25px;
+}
+
+.items .item {
+  padding: 0 0 25px;
+  margin-bottom: 25px;
+  border-bottom: 1px solid #ccc;
+}
+
+.output-wrap{
+  margin: 25px auto;
+  padding: 25px;
+  border: 1px solid #ccc;
+}
