@@ -1,0 +1,10 @@
+.searchbar{
+  margin: 50px 25px;
+}
+
+.searchbar input{
+  padding: 10px;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}

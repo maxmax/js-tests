@@ -3,6 +3,10 @@ import webpack from 'webpack';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import config from '../webpack.config.js'
 
+import React from 'react';
+import ReactDom from 'react-dom/server';
+import App from 'components/App';
+
 import {apps} from "./tests/apps";
 import {foo} from "./tests/foo";
 import {square} from "./tests";
@@ -23,12 +27,12 @@ const questions = [
 
 const assetUrl = process.env.NODE_ENV !== 'production' ? 'http://localhost:8050' : '/';
 
-//app.get('/', function (req, res) {
-  //res.sendFile(path.join(dist + "index.html"));
+app.get('/', function (req, res) {
+  //res.sendFile(path.join(dist + "jstests.html"));
   //const componentHTML = ReactDom.renderToString(<App />);
   //const componentHTML = apps('New apps:') + foo(questions);
-  //return res.end(renderHTML(componentHTML));
-//})
+  return res.end(renderTests());
+})
 
 app.get('/api', function (req, res) {
   res.setHeader('Content-Type', 'application/json');
@@ -41,6 +45,22 @@ app.get('/tests', function (req, res) {
   return res.end(renderHTML(componentHTML));
 })
 
+function renderTests() {
+  return `
+    <!DOCTYPE html>
+      <html>
+      <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Tests</title>
+      </head>
+      <body>
+        <script type="text/javascript" src="tests.bundle.js"></script>
+      </body>
+    </html>
+  `;
+}
+
 function renderHTML(componentHTML) {
   return `
     <!DOCTYPE html>
@@ -52,6 +72,28 @@ function renderHTML(componentHTML) {
       </head>
       <body>
         <div id="view">${componentHTML}</div>
+      </body>
+    </html>
+  `;
+}
+
+app.get('/react', function (req, res) {
+  const reactHTML = ReactDom.renderToString(<App />);
+  return res.end(renderReactHTML(reactHTML));
+})
+
+function renderReactHTML(reactHTML) {
+  return `
+    <!DOCTYPE html>
+      <html>
+      <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Hello</title>
+      </head>
+      <body>
+        <div id="react-view">${reactHTML}</div>
+        <script type="text/javascript" src="app.bundle.js"></script>
       </body>
     </html>
   `;
