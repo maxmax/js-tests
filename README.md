@@ -1,6 +1,15 @@
 - npm run build
+- npm run watch
+- npm client
 - npm run deploy
-- npm nodemon
+- npm run nodemon
+- npm start
+- npm test
+
+## Demo
+[jstests](https://maxmax.github.io/js-tests/jstests)
+||
+[react](https://maxmax.github.io/js-tests/)
 
 ```
 //1. What is the value of counter after executing the following piece of code?
@@ -389,4 +398,37 @@ export function thirtyFive() {
   var a = null;
   return typeof a === "object";
 }
+
+//36. What is the output?
+export function promiseRes() {
+  let promise = new Promise((resolve) => {
+    setTimeout(() => {
+      resolve('Promise resolved');
+    }, 500);
+    console.log( 'Promise activated' );
+  });
+  promise.then((result) => console.log("35. What is the output:", result));
+  //return result;
+}
+
+//37. What is the output?
+export function intRes() {
+  const intbar = document.querySelector('#output');
+  const see = document.querySelector('[data-role="see"]');
+  const mainbar = new Bar('ololo', intbar, see);
+  mainbar.speak();
+}
+
+//38. Sort numeric array, What is the output?
+export function numRes() {
+  var a = [ 1, 4, 8, 10, 13 ];
+  var b = [ 2, 3, 7 ];
+  var c = [ 14, 15 ];
+  var arr = a.concat(b, c);
+  var d = arr.sort(function (a, b) {
+    return a - b;
+  });
+  return d;
+}
+
 ```
