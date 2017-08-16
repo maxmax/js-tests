@@ -1,0 +1,22 @@
+body, body{
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.app {
+  padding: 0px;
+}
+
+.app h1 {
+  font-size: 26px;
+}
+
+.app input {
+  padding: 10px;
+}
+
+.app hr {
+  margin-top: 20px;
+}

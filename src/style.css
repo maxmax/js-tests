@@ -19,6 +19,7 @@ pre {
   background: #202020;
   border-radius: 2px;
   color: white;
+  overflow: auto;
 }
 
 .question section input + label {

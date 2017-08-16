@@ -5,7 +5,8 @@ const webpack = require('webpack');
 
 module.exports = {
   entry: {
-    app: './src/index.js'
+    tests: './src/index.js',
+    app: './src/main.js'
   },
   //devtool: 'inline-source-map',
   devServer: {
@@ -14,9 +15,9 @@ module.exports = {
   },
   plugins: [
     //new CleanWebpackPlugin(['dist']),
-    new HtmlWebpackPlugin({
-      title: 'Output Management'
-    }),
+    //new HtmlWebpackPlugin({
+    //  title: 'Output Management'
+    //}),
     new webpack.HotModuleReplacementPlugin(),
     //new webpack.optimize.UglifyJsPlugin({
     //  sourceMap: options.devtool && (options.devtool.indexOf("sourcemap") >= 0 || options.devtool.indexOf("source-map") >= 0)
@@ -29,6 +30,14 @@ module.exports = {
   },
   module: {
     rules: [
+      {
+        test: /\.js$/,
+        exclude: [/node_modules/],
+        use: [{
+          loader: 'babel-loader',
+          options: { presets: ['es2015'] },
+        }],
+      },
       {
         test: /\.css$/,
         use: [
