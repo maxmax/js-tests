@@ -38,7 +38,8 @@ import {
   thirtyFive,
   promiseRes,
   intRes,
-  numRes} from "./";
+  numRes,
+  reverseOutput} from "./";
 
 //components
 import {foo} from "./foo";
@@ -101,7 +102,8 @@ export default function testWrapper() {
     { title: '35. What is the output?', code: thirtyFive, result: thirtyFive() },
     { title: '36. What is the result?', code: promiseRes, result: promiseRes() },
     { title: '37. What is the result?', code: intRes },
-    { title: '38. What is the result?', code: numRes, result: numRes() }
+    { title: '38. What is the result?', code: numRes, result: numRes() },
+    { title: '39. What is the result?', code: reverseOutput, result: reverseOutput() }
   ];
 
   //tmp

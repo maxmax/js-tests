@@ -427,3 +427,12 @@ export function numRes() {
   });
   return d;
 }
+
+//39. What is the output?
+export function reverseOutput() {
+  String.prototype.reverse = function () {
+    return this.split('').reverse().join('');
+  }
+  const result = 'Hello, world!'.reverse();
+  return result;
+}
