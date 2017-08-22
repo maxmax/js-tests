@@ -1,18 +1,3 @@
-- npm run build
-- npm run watch
-- npm client
-- npm run deploy
-- npm run nodemon
-- npm start
-- npm test
-
-## Demo
-[jstests](https://maxmax.github.io/js-tests/jstests)
-||
-[react](https://maxmax.github.io/js-tests/)
-||
-[server](https://cryptic-anchorage-44900.herokuapp.com)
-
 ```
 //1. What is the value of counter after executing the following piece of code?
 export function counterValue(counter = 10) {
