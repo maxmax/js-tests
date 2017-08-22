@@ -6,7 +6,8 @@ const webpack = require('webpack');
 module.exports = {
   entry: {
     tests: './src/index.js',
-    app: './src/main.js'
+    app: './src/main.js',
+    landing: './src/landing.js'
   },
   //devtool: 'inline-source-map',
   devServer: {

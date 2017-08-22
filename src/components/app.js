@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import {connect} from 'react-redux';
 import Section from './elements/Section';
 import Searchbar from './elements/Searchbar';
 
@@ -6,6 +7,9 @@ import './app.css';
 
 class App extends Component {
   render() {
+    const { words } = this.props;
+    console.log("words", words);
+
     return (
       <div className='app'>
         <Section>
@@ -30,4 +34,11 @@ class App extends Component {
   }
 }
 
-export default App;
+function mapStateToProps(state) {
+  const { inwords } = state;
+  return {
+    words: inwords.words || [],
+  };
+}
+
+export default connect(mapStateToProps)(App);

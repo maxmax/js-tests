@@ -11,9 +11,14 @@ import {apps} from "./tests/apps";
 import {foo} from "./tests/foo";
 import {square} from "./tests";
 
+import {landing} from "./tests/landing";
+
+
 const app = express();
 //const config from '../webpack.config.js';
 const compiler = webpack(config);
+
+app.use(express.static('dist'));
 
 // Tell express to use the webpack-dev-middleware and use the webpack.config.js
 // configuration file as a base.
@@ -39,6 +44,29 @@ app.get('/api', function (req, res) {
   res.send(JSON.stringify({ a: 1 }, null, 3));
 });
 
+app.get('/under_water', function (req, res) {
+  //const componentHTML = 'under water';
+  const componentHTML = landing('under water');
+  return res.end(renderUnderwater(componentHTML));
+});
+
+function renderUnderwater(componentHTML) {
+  return `
+    <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Under water</title>
+      </head>
+      <body>
+        <div id="view">${componentHTML}</div>
+        <script type="text/javascript" src="landing.bundle.js"></script>
+      </body>
+    </html>
+  `;
+}
+
 app.get('/tests', function (req, res) {
   //res.send(JSON.stringify([1,2,3]));
   const componentHTML = apps('New apps:') + foo(questions);
@@ -50,9 +78,9 @@ function renderTests() {
     <!DOCTYPE html>
       <html>
       <head>
-          <meta charset="utf-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Tests</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Tests</title>
       </head>
       <body>
         <script type="text/javascript" src="tests.bundle.js"></script>
@@ -87,12 +115,12 @@ function renderReactHTML(reactHTML) {
     <!DOCTYPE html>
       <html>
       <head>
-          <meta charset="utf-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Hello</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Hello</title>
       </head>
       <body>
-        <div id="react-view">${reactHTML}</div>
+        <div id="root">${reactHTML}</div>
         <script type="text/javascript" src="app.bundle.js"></script>
       </body>
     </html>
