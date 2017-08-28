@@ -434,3 +434,8 @@ export function numRes() {
 }
 
 ```
+
+## Docs
+[server settings, example node server](https://github.com/babel/example-node-server)
+||
+[REACT ROUTER, LEARN ONCE, ROUTE ANYWHERE](https://reacttraining.com/react-router/)

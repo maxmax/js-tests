@@ -1,7 +1,7 @@
 import React from 'react';
 import './section.css';
 
-function Section( { children } ) {
+function Section({children}) {
   return (
     <section className="section auto">
       {children}

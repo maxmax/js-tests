@@ -121,7 +121,6 @@ function renderReactHTML(reactHTML) {
       </head>
       <body>
         <div id="root">${reactHTML}</div>
-        <script type="text/javascript" src="app.bundle.js"></script>
       </body>
     </html>
   `;

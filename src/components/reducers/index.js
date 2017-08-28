@@ -1,8 +1,12 @@
 import { combineReducers } from 'redux'
-import inwords from "./words";
+import inbox from "./inbox";
+import words from "./words";
 import counter from "./counter";
+import weather from "./weather";
 
 export default combineReducers({
-  inwords,
+  inbox,
+  words,
   counter,
+  weather,
 });

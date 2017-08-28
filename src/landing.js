@@ -3,7 +3,11 @@ import {devconf} from "./tests/landing/device/conf";
 import {checkVisible} from "./tests/landing/helpers";
 import './tests/landing/style.css';
 
+//import './media/videoplayback.mp4';
+//import vplay from './media/videoplayback.mp4';
+
 console.log("Mount Landing!!!");
+//console.log("vplay", vplay);
 //select device
 const view = document.getElementById('view');
 

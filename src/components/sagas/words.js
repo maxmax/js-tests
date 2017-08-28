@@ -1,7 +1,7 @@
 import { call, put, take } from "redux-saga/effects";
 
 //isomorphic-fetch
-const fetchWords = ["Olololo", "kokoko"];
+const fetchWords = ["Olololo", "kokoko", "test"];
 
 export function* loadWords() {
   try {

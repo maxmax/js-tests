@@ -22,7 +22,6 @@ class Bar {
       if (this.ind){
         this.ind.addEventListener('click', function() {
           const animal = new Animal(inname);
-          console.log("this", this);
           document.body.appendChild(outerWrap());
           animal.speak();
         });

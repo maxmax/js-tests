@@ -408,15 +408,7 @@ export function promiseRes() {
   //return result;
 }
 
-//37. What is the output?
-export function intRes() {
-  const intbar = document.querySelector('#output');
-  const see = document.querySelector('[data-role="see"]');
-  const mainbar = new Bar('ololo', intbar, see);
-  mainbar.speak();
-}
-
-//38. Sort numeric array, What is the output?
+//37. Sort numeric array, What is the output?
 export function numRes() {
   var a = [ 1, 4, 8, 10, 13 ];
   var b = [ 2, 3, 7 ];
@@ -428,7 +420,7 @@ export function numRes() {
   return d;
 }
 
-//39. What is the output?
+//38. What is the output?
 export function reverseOutput() {
   String.prototype.reverse = function () {
     return this.split('').reverse().join('');

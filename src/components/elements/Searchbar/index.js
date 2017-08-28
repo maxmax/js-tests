@@ -1,21 +1,17 @@
 import React from 'react';
-import './searchbar.css';
 
 function Searchbar( { term, data, update } ) {
 
   const dataSearch = e => {
-    //const value = e.target.value.toLowerCase();
-    //const filter = data.filter(inbox => {
-    //  return inbox.text.toLowerCase().includes(value);
-    //});
-
-    //update({
-    //  data: filter,
-    //  active: 0,
-    //  term: value
-    //});
-    console.log("dataSearch");
-
+    const value = e.target.value.toLowerCase();
+    const filter = data.filter(inbox => {
+      return inbox.text.toLowerCase().includes(value);
+    });
+    update({
+      data: filter,
+      active: 0,
+      term: value
+    });
   };
 
   return (
@@ -24,7 +20,7 @@ function Searchbar( { term, data, update } ) {
         value={term}
         type="text"
         className="form-control"
-        placeholder="Search people by name..."
+        placeholder="Search..."
         onChange={dataSearch}
       />
     </div>

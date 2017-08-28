@@ -1,43 +1,53 @@
 import React, { Component } from 'react';
 import {connect} from 'react-redux';
-import Section from './elements/Section';
-import Searchbar from './elements/Searchbar';
-
-import './app.css';
+import { Button } from 'reactstrap';
+import Home from './modules/home';
+import Inbox from './modules/inbox';
 
 class App extends Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      term: '',
+      data: []
+    };
+    this.resetData = this.resetData.bind(this);
+  }
+
+  resetData() {
+    this.setState({data: []});
+  }
+
+  updateData(config) {
+    this.setState(config);
+  }
+
   render() {
-    const { words } = this.props;
-    console.log("words", words);
+    const { inbox, words } = this.props;
 
     return (
       <div className='app'>
-        <Section>
-          <section>
-            <article>
-              <h2>Hello React!</h2>
-              <p>Be sure to have your pages set up with...</p>
-            </article>
-          </section>
-          <section>
-            <Searchbar />
-          </section>
-          <section>
-            <article>
-              <h2>Result:</h2>
-              <p>Empty</p>
-            </article>
-          </section>
-        </Section>
+        <Home />
+        <Inbox
+          inbox={inbox}
+          words={words}
+          term={this.state.term}
+          update={this.updateData.bind(this)}
+          reset={this.resetData}
+          result={this.state.data}
+        />
       </div>
     );
   }
 }
 
 function mapStateToProps(state) {
-  const { inwords } = state;
+  const { inbox, words } = state;
   return {
-    words: inwords.words || [],
+    inbox: inbox.inbox || [],
+    words: words.words || [],
   };
 }
 
