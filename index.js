@@ -16,7 +16,7 @@ app.use((req, res) => {
   return res.end(renderHTML(componentHTML));
 });
 
-//const assetUrl = process.env.NODE_ENV !== 'dist' ? 'http://localhost:8050' : '/';
+//const assetUrl = process.env.NODE_ENV !== 'production' ? 'http://localhost:8080' : '/';
 
 function renderHTML(componentHTML) {
   return `

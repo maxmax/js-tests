@@ -6,7 +6,7 @@
   "scripts": {
     "test": "node test.js",
     "start": "babel-node index.js --presets es2015,stage-2",
-    "build": "webpack",
+    "build": "NODE_ENV='production' webpack -p",
     "watch": "webpack --watch",
     "client": "webpack-dev-server --open",
     "deploy": "node pages.js gh-pages -d dist",
