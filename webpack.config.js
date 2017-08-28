@@ -19,7 +19,7 @@ const uglifyjs = new webpack.optimize.UglifyJsPlugin({
     loops         : true,
     unused      : true,
     warnings    : false,
-    drop_console: true,
+    drop_console: false,
     unsafe      : true
   }
 });
