@@ -1,41 +1,50 @@
 import _ from 'lodash';
 import {devconf} from "./tests/landing/device/conf";
 import {checkVisible} from "./tests/landing/helpers";
+import {layout} from "./tests/landing/layout";
 import './tests/landing/style.css';
+import videobg from './media/videoplayback.mp4';
 
-//import './media/videoplayback.mp4';
-//import vplay from './media/videoplayback.mp4';
+//console.log("Mount Landing!!!");
 
-console.log("Mount Landing!!!");
-//console.log("vplay", vplay);
-//select device
-const view = document.getElementById('view');
+function App(options) {
 
-const deviceRun = view.querySelector('#deviceSelect');
-devconf(deviceRun);
+  const view = options.elem;
 
-//Slide events
-const hrtwo = view.querySelector("#hr-two .caption");
-const hrthree = view.querySelector("#hr-three .caption");
-const hrselect = view.querySelector("[class*='selection'] .form-control");
+  view.innerHTML = layout({title: 'under water', url: videobg});
 
-window.onscroll = function() {
-  if (checkVisible(hrtwo)){
-    view.className = "two";
-  } else if (checkVisible(hrthree)){
-    view.className = "three";
-  } else if (checkVisible(hrselect)){
-    view.className = "top";
-  } else {
-    view.className = "def";
+  let element = hotlayer();
+  view.appendChild(element);
+
+  function hotlayer() {
+    var element = document.createElement('section');
+    element.className = 'event-layer';
+    return element;
   }
-};
 
-let element = hotlayer();
-view.appendChild(element);
+  //Device
+  //const deviceRun = view.querySelector('#deviceSelect');
+  devconf(view.querySelector('#deviceSelect'));
 
-function hotlayer() {
-  var element = document.createElement('section');
-  element.className = 'event-layer';
-  return element;
+  //Slide events
+  const hrtwo = view.querySelector("#hr-two .caption");
+  const hrthree = view.querySelector("#hr-three .caption");
+  const hrselect = view.querySelector("[class*='selection'] .form-control");
+
+  window.onscroll = function() {
+    if (checkVisible(hrtwo)){
+      view.className = "two";
+    } else if (checkVisible(hrthree)){
+      view.className = "three";
+    } else if (checkVisible(hrselect)){
+      view.className = "top";
+    } else {
+      view.className = "def";
+    }
+  };
+
 }
+
+const app = new App({
+  elem: document.getElementById('view')
+});

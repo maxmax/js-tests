@@ -1,7 +1,5 @@
 import {createStore} from "redux";
 
-//import {intRes} from "./";
-
 import {quest} from './quest';
 
 //components
@@ -21,61 +19,49 @@ const errorColor = "background: red; color: white";
 const successColor = "background: #28a745; color: white";
 
 export default function testWrapper() {
+
   console.log('MountWrapper!');
 
   const impAmount = (`Amount of imports: ${one + two}`);
   console.log("%c impAmount:", successColor, impAmount);
 
   //tmp
-  const footerOutput = `
-    <section id="output">
-      <h2>test tmp</h2>
-      <button class="primary hello" role="button" data-role="see">Action</button>
-    </section>
-  `;
+  //const footerOutput = `
+  //  <section id="output">
+  //    <h2>test tmp</h2>
+  //    <button class="primary hello" role="button" data-role="see">Action</button>
+  //  </section>
+  //`;
 
   function component() {
     var element = document.createElement('section');
-    var btn = document.createElement('button');
+    //var btn = document.createElement('button');
+    //element.innerHTML = _.join(['<h1>JS base</h1>', foo(quest), footerOutput], ' ');
+    element.innerHTML = _.join(['<h1>JS base</h1>', foo(quest)], ' ');
 
-    element.innerHTML = _.join(['<h1>JS base</h1>', foo(quest), footerOutput], ' ');
+    //var myIcon = new Image();
+    //myIcon.src = Icon;
+    //myIcon.className = 'media';
+    //element.appendChild(myIcon);
+    //console.log(Data);
 
-    var myIcon = new Image();
-    myIcon.src = Icon;
-    myIcon.className = 'media';
-    element.appendChild(myIcon);
-    console.log(Data);
-
-    btn.innerHTML = 'Click me and check the console printMe!';
-    btn.onclick = printMe;
-    element.appendChild(btn);
+    //btn.innerHTML = 'Click me and check the console printMe!';
+    //btn.onclick = printMe;
+    //element.appendChild(btn);
 
     return element;
   }
 
-  //document.body.appendChild(component());
   let element = component(); // Store the element to re-render on print.js changes
   document.body.appendChild(element);
 
-  console.log("=====================//=====================");
+  console.log("=====================/patterns etc/=====================");
 
   patternsWrapper();
 
   //end
-  console.log("==========================================");
-
-  //hot
-  if (module.hot) {
-    module.hot.accept('./print', function() {
-      console.log('Accepting the updated printMe module!');
-      //printMe();
-      document.body.removeChild(element);
-      element = component(); // Re-render the "component" to update the click handler
-      document.body.appendChild(element);
-    })
-  }
-
-  console.log("=====================//=====================");
+  console.log("==================/end/========================");
+  console.log("==================/Redux/========================");
 
   //Redux
   function counter(state = 0, action) {

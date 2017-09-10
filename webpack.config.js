@@ -24,32 +24,24 @@ const uglifyjs = new webpack.optimize.UglifyJsPlugin({
   }
 });
 
-const extractAuto = new HtmlWebpackPlugin({
-  title: 'Output Auto',
-  filename: 'index.html',
-  template: 'src/template/react.ejs',
-  chunks:['app']
-});
-
 const extractTest = new HtmlWebpackPlugin({
   title: 'Output Tests',
-  filename: 'tests.html',
+  filename: 'index.html',
   template: 'src/template/test.ejs',
   inject: false
 });
 
 const extractHtml = new HtmlWebpackPlugin({
-  title: 'Output Management React',
-  filename: 'test-react.html',
-  template: 'src/template/react.ejs',
-  chunks:['app']
+  title: 'Output Management landing',
+  filename: 'landing.html',
+  template: 'src/template/landing.ejs',
+  chunks:['landing']
   //hash: true,
 });
 
 module.exports = {
   entry: {
     tests: './src/index.js',
-    app: './src/main.js',
     landing: './src/landing.js'
   },
   //devtool: 'inline-source-map',
@@ -66,10 +58,9 @@ module.exports = {
     new CleanWebpackPlugin(['dist']),
     extractTest,
     extractHtml,
-    extractAuto,
     new webpack.HotModuleReplacementPlugin(),
-    extractSass,
-    uglifyjs
+    extractSass
+    //uglifyjs
   ],
   module: {
     rules: [
