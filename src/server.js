@@ -3,22 +3,22 @@ import webpack from 'webpack';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import config from '../webpack.config.js'
 
-import React from 'react';
-import ReactDom from 'react-dom/server';
-import App from 'components/App';
+//import React from 'react';
+//import ReactDom from 'react-dom/server';
+//import App from 'components/App';
 
 import {apps} from "./tests/apps";
 import {foo} from "./tests/foo";
 import {square} from "./tests";
 
-import {landing} from "./tests/landing";
+import {layout} from "./tests/landing/layout";
 
 
 const app = express();
 //const config from '../webpack.config.js';
 const compiler = webpack(config);
 
-app.use(express.static('dist'));
+app.use(express.static('public'));
 
 // Tell express to use the webpack-dev-middleware and use the webpack.config.js
 // configuration file as a base.
@@ -45,8 +45,7 @@ app.get('/api', function (req, res) {
 });
 
 app.get('/under_water', function (req, res) {
-  //const componentHTML = 'under water';
-  const componentHTML = landing('under water');
+  const componentHTML = layout('under water');
   return res.end(renderUnderwater(componentHTML));
 });
 
@@ -100,27 +99,6 @@ function renderHTML(componentHTML) {
       </head>
       <body>
         <div id="view">${componentHTML}</div>
-      </body>
-    </html>
-  `;
-}
-
-app.get('/react', function (req, res) {
-  const reactHTML = ReactDom.renderToString(<App />);
-  return res.end(renderReactHTML(reactHTML));
-})
-
-function renderReactHTML(reactHTML) {
-  return `
-    <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Hello</title>
-      </head>
-      <body>
-        <div id="root">${reactHTML}</div>
       </body>
     </html>
   `;

@@ -179,5 +179,11 @@ export default function patternsWrapper() {
   console.log("bind:", ancestry.filter(isInSet.bind(null, theSet)));
   // → … same result
 
+  //regexp
+  var strregexp = "i love JavaScript!"; // search this string
+  var regexp = /ve/;
+  console.log("regexp", strregexp.search(regexp));
+  console.log("regexp", strregexp.search( /VE/) ); // -1
+  console.log("regexp", strregexp.search( /VE/i) ); // 2
 
 }

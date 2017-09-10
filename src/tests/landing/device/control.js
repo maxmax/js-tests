@@ -1,6 +1,2 @@
-export function control(control = 'default') {
-  const result = `
-    <div class='${"control-" + control}'>${control}</div>
-  `;
-  return result;
-}
+export const Control = (control = 'default') =>
+  `<div class='${"control-" + control}'>${control}</div>`

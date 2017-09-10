@@ -439,3 +439,48 @@ export function numRes() {
 [server settings, example node server](https://github.com/babel/example-node-server)
 ||
 [REACT ROUTER, LEARN ONCE, ROUTE ANYWHERE](https://reacttraining.com/react-router/)
+
+```
+//
+
+// function aaaaaFire() {
+//   console.log('Aaaaaaaa! FIRE!');
+// }
+
+// function callTheFireDepartment(obj) {
+//   console.log('Call the fire brigade to', obj.address);
+// }
+
+
+// let a = new EventEmitter();
+// a.on('roof-on-fire', aaaaaFire); // повесить обработчик на событие
+// a.once('roof-on-fire', callTheFireDepartment); // то же, но вызвать обработчик только один раз
+
+
+// a.emit('roof-on-fire', { address: '560, Mission st.'}); // 1 + 2
+// a.emit('roof-on-fire', { address: '560, Mission st.'}); // 1
+// a.emit('roof-on-fire', { address: '560, Mission st.'}); // 1
+
+// a.off('roof-on-fire'); // убрать все обработчики для roof-on-fire
+// console.log('off');
+
+// a.emit('roof-on-fire', { address: '560, Mission st.'});
+
+// function EventEmitter() {
+
+// }
+
+
+for (var i = 0; i < 5; i++) {
+    setTimeout(function () {
+        console.log(i);
+    }, 100)    
+}
+
+var i = 0;
+while (i < 3) {
+  alert( i );
+  i++;
+}
+
+```

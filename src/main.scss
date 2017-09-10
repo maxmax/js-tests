@@ -1,13 +1,15 @@
-html, body{
+/*html, body{
   padding: 0;
   margin: 0;
 }
 
 *, *:before, *:after {
   box-sizing: border-box;
-}
+}*/
 //@import 'bootstrap/bootstrap.scss';
 
+// Custom variables and mixins
+@import "components/layout/admin/var";
 // Core variables and mixins
 @import "bootstrap/variables";
 @import "bootstrap/mixins";
@@ -18,12 +20,12 @@ html, body{
 @import "bootstrap/print";
 
 // Core CSS
-//@import "bootstrap/reboot";
+@import "bootstrap/reboot";
 @import "bootstrap/type";
 //@import "bootstrap/images";
 //@import "bootstrap/code";
 @import "bootstrap/grid";
-//@import "bootstrap/tables";
+@import "bootstrap/tables";
 @import "bootstrap/forms";
 @import "bootstrap/buttons";
 
@@ -33,9 +35,9 @@ html, body{
 //@import "bootstrap/button-group";
 //@import "bootstrap/input-group";
 //@import "bootstrap/custom-forms";
-//@import "bootstrap/nav";
-//@import "bootstrap/navbar";
-//@import "bootstrap/card";
+@import "bootstrap/nav";
+@import "bootstrap/navbar";
+@import "bootstrap/card";
 //@import "bootstrap/breadcrumb";
 //@import "bootstrap/pagination";
 //@import "bootstrap/badge";
@@ -43,7 +45,7 @@ html, body{
 //@import "bootstrap/alert";
 //@import "bootstrap/progress";
 //@import "bootstrap/media";
-//@import "bootstrap/list-group";
+@import "bootstrap/list-group";
 //@import "bootstrap/responsive-embed";
 //@import "bootstrap/close";
 
@@ -60,3 +62,7 @@ html, body{
 .wrapper.output{
   margin: 25px;
 }
+
+@import "components/layout/admin/style";
+@import "components/elements/Range/rangeslider";
+@import "components/elements/ReactSelect/react-select";
